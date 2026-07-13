@@ -19,17 +19,17 @@ PHP 8.1+, pdo_mysql, json, mbstring, Apache con mod_rewrite/mod_headers, MySQL 5
 
 ## Instalación rápida en XAMPP
 
-    cd C:\xampp\htdocs\control-de-accesos
-    C:\xampp\php\php.exe scripts\check_requirements.php
+    cd C:\xampp-8.1\htdocs\control-de-accesos
+    C:\xampp-8.1\php\php.exe scripts\check_requirements.php
     composer install
 
 Abre http://localhost/control-de-accesos/public/install/. El asistente crea la base si el usuario de MySQL tiene permiso, escribe .env, ejecuta migraciones/seeds, crea empresa y superadministrador y genera storage/installed.lock.
 
 ## Consola
 
-    C:\xampp\php\php.exe scripts\migrate.php
-    C:\xampp\php\php.exe scripts\seed.php
-    C:\xampp\php\php.exe scripts\seed.php --demo
+    C:\xampp-8.1\php\php.exe scripts\migrate.php
+    C:\xampp-8.1\php\php.exe scripts\seed.php
+    C:\xampp-8.1\php\php.exe scripts\seed.php --demo
     vendor\bin\phpunit
 
 ## Endpoints
