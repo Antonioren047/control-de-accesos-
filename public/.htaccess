@@ -12,4 +12,6 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(self), geolocation=(), microphone=()"
 Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; script-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
 </IfModule>
-<FilesMatch "^\."><Require all denied></FilesMatch>
+<FilesMatch "^\.">
+Require all denied
+</FilesMatch>
