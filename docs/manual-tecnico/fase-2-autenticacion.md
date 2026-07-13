@@ -21,7 +21,9 @@ Cada petición protegida exige una sesión PHP válida, token no revocado, expir
 
 ## Interfaz autenticada
 
-El panel utiliza navegación ligera por vistas para Inicio, Mi perfil y Seguridad. Mi perfil presenta identidad, rol, empresa y fechas relevantes. Seguridad permite cambiar la contraseña, consultar permisos y administrar exclusivamente las sesiones pertenecientes al usuario autenticado.
+El panel utiliza navegación ligera por vistas para Inicio, Mi perfil, Seguridad y Permisos. El servidor solo renderiza los módulos autorizados y los servicios vuelven a comprobar el permiso en cada operación; cambiar manualmente el hash de la URL no concede acceso. La matriz Permisos exige `permissions.manage` y permite activar o desactivar cada acción por rol.
+
+Para validar localmente al Vigilante antes de implementar QR + PIN puede establecerse `security.guard_web_login_enabled=1`. La semilla lo crea desactivado y no sobreescribe una habilitación local existente. En producción debe permanecer en `0`.
 
 ## Alcance
 

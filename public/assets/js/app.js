@@ -37,10 +37,15 @@ const viewMeta = {
     inicio: ['Acceso autenticado', 'Panel principal'],
     perfil: ['Identidad y alcance', 'Mi perfil'],
     seguridad: ['Protección de la cuenta', 'Seguridad'],
+    permisos: ['Control de autorización', 'Permisos por rol'],
 };
 
 function activateView(requested, updateHash = true) {
-    const view = viewMeta[requested] ? requested : 'inicio';
+    const requestedView = viewMeta[requested] ? requested : 'inicio';
+    const isAuthorized = [...document.querySelectorAll('[data-view]')]
+        .some(section => section.dataset.view === requestedView);
+    const view = isAuthorized ? requestedView : 'inicio';
+    if (requestedView !== view) notify('No tienes permiso para abrir ese módulo.', 'error');
     document.querySelectorAll('[data-view]').forEach(section => { section.hidden = section.dataset.view !== view; });
     document.querySelectorAll('nav [data-view-target]').forEach(link => link.classList.toggle('active', link.dataset.viewTarget === view));
     const [eyebrow, title] = viewMeta[view];
@@ -51,6 +56,7 @@ function activateView(requested, updateHash = true) {
     sidebar?.classList.remove('open');
     if (updateHash && location.hash !== `#${view}`) history.replaceState(null, '', `#${view}`);
     if (view === 'seguridad') loadSessions();
+    if (view === 'permisos') loadPermissionMatrix();
 }
 
 document.querySelectorAll('[data-view-target]').forEach(link => link.addEventListener('click', event => {
@@ -140,4 +146,96 @@ async function loadSessions(force = false) {
 }
 
 document.querySelector('#refreshSessions')?.addEventListener('click', () => loadSessions(true));
+
+const permissionRole = document.querySelector('#permissionRole');
+const permissionMatrix = document.querySelector('#permissionMatrix');
+const permissionSummary = document.querySelector('#permissionSummary');
+let authorizationMatrix = null;
+
+function renderPermissionMatrix() {
+    if (!authorizationMatrix || !permissionRole || !permissionMatrix) return;
+    const role = authorizationMatrix.roles.find(item => item.code === permissionRole.value);
+    if (!role) return;
+    const assigned = new Set(role.permissions);
+    const grouped = authorizationMatrix.permissions.reduce((modules, permission) => {
+        (modules[permission.module] ||= []).push(permission);
+        return modules;
+    }, {});
+    permissionSummary.textContent = `${role.name}: ${assigned.size} permisos activos.`;
+    permissionMatrix.textContent = '';
+
+    Object.entries(grouped).forEach(([moduleName, permissions]) => {
+        const card = document.createElement('article');
+        card.className = 'security-card permission-module';
+        const heading = document.createElement('div');
+        heading.className = 'permission-module-heading';
+        const title = document.createElement('h3');
+        title.textContent = moduleName;
+        const count = document.createElement('span');
+        count.className = 'badge neutral';
+        count.textContent = `${permissions.filter(permission => assigned.has(permission.code)).length}/${permissions.length}`;
+        heading.append(title, count);
+        card.append(heading);
+
+        permissions.forEach(permission => {
+            const label = document.createElement('label');
+            label.className = 'permission-toggle';
+            const copy = document.createElement('span');
+            const name = document.createElement('strong');
+            name.textContent = permission.name;
+            const code = document.createElement('small');
+            code.textContent = `${permission.code} · acción: ${permission.action}`;
+            copy.append(name, code);
+            const input = document.createElement('input');
+            input.type = 'checkbox';
+            input.checked = assigned.has(permission.code);
+            input.disabled = role.code === 'superadmin';
+            input.addEventListener('change', async () => {
+                input.disabled = true;
+                try {
+                    await api('/authorization/roles', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            role_code: role.code,
+                            permission_code: permission.code,
+                            allowed: input.checked,
+                        }),
+                    });
+                    if (input.checked) assigned.add(permission.code); else assigned.delete(permission.code);
+                    role.permissions = [...assigned];
+                    notify('Permiso actualizado correctamente.');
+                    renderPermissionMatrix();
+                } catch (error) {
+                    input.checked = !input.checked;
+                    input.disabled = false;
+                    notify(error.message, 'error');
+                }
+            });
+            label.append(copy, input);
+            card.append(label);
+        });
+        permissionMatrix.append(card);
+    });
+}
+
+async function loadPermissionMatrix(force = false) {
+    if (!permissionMatrix || (authorizationMatrix && !force)) return;
+    try {
+        const payload = await api('/authorization/roles');
+        authorizationMatrix = payload.data;
+        permissionRole.textContent = '';
+        authorizationMatrix.roles.forEach(role => {
+            const option = document.createElement('option');
+            option.value = role.code;
+            option.textContent = role.name;
+            permissionRole.append(option);
+        });
+        renderPermissionMatrix();
+    } catch (error) {
+        permissionMatrix.textContent = error.message;
+        notify(error.message, 'error');
+    }
+}
+
+permissionRole?.addEventListener('change', renderPermissionMatrix);
 activateView(location.hash.slice(1) || 'inicio', false);

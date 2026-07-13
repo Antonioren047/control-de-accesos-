@@ -94,6 +94,19 @@ paths:
       responses:
         '200': {description: Contraseña restablecida y sesiones revocadas}
         '403': {description: Permiso users.password_reset requerido}
+  /authorization/roles:
+    get:
+      summary: Consultar matriz de permisos por rol
+      responses:
+        '200': {description: Matriz disponible}
+        '403': {description: Permiso permissions.manage requerido}
+    post:
+      summary: Activar o desactivar un permiso para un rol
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Permiso actualizado}
+        '403': {description: Permiso permissions.manage requerido}
+        '422': {description: Datos inválidos}
 components:
   parameters:
     CsrfToken:

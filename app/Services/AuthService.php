@@ -42,9 +42,11 @@ final class AuthService
         }
 
         $user = $this->users->findByEmail($email);
+        $guardWebLoginAllowed = !$user || $user['role_code'] !== 'guard'
+            || $this->settingInt('security.guard_web_login_enabled', 0) === 1;
         $valid = $user
             && (bool) $user['is_active']
-            && $user['role_code'] !== 'guard'
+            && $guardWebLoginAllowed
             && password_verify($password, $user['password_hash']);
         if (!$valid) {
             $failure = $this->attempts->registerFailure(
@@ -134,6 +136,7 @@ final class AuthService
 
     public function changePassword(array $user, string $currentPassword, string $newPassword): void
     {
+        $this->authorization->require($user, 'auth.password.change');
         if (!password_verify($currentPassword, $user['password_hash'])) {
             throw new HttpException('La contraseña actual no es correcta.', 422, ['current_password' => ['No coincide.']]);
         }
@@ -167,10 +170,16 @@ final class AuthService
 
     public function updateTheme(array $user, string $theme): void
     {
+        $this->authorization->require($user, 'auth.profile.view');
         if (!in_array($theme, ['auto', 'light', 'dark'], true)) {
             throw new HttpException('Preferencia de tema inválida.', 422);
         }
         $this->users->updateTheme((int) $user['id'], $theme);
+    }
+
+    public function authorize(array $user, string $permission): void
+    {
+        $this->authorization->require($user, $permission);
     }
 
     public function sessions(array $user): array

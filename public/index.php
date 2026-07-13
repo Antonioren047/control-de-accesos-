@@ -23,6 +23,12 @@ if (!$user) {
 }
 $profile = $auth->publicUser($user);
 $csrf = CsrfMiddleware::token();
+$canProfile = in_array('auth.profile.view', $profile['permissions'], true);
+$canChangePassword = in_array('auth.password.change', $profile['permissions'], true);
+$canViewSessions = in_array('auth.sessions.view', $profile['permissions'], true);
+$canSecurity = $canChangePassword || $canViewSessions;
+$canManagePermissions = in_array('permissions.manage', $profile['permissions'], true);
+$canViewApi = in_array('system.configure', $profile['permissions'], true);
 $names = preg_split('/\s+/', trim($profile['full_name'])) ?: [];
 $initials = strtoupper(substr($names[0] ?? 'U', 0, 1) . substr($names[1] ?? '', 0, 1));
 $themeLabels = ['auto' => 'Automático', 'light' => 'Claro', 'dark' => 'Oscuro'];
@@ -57,9 +63,10 @@ $formatDate = static function (?string $value): string {
         </a>
         <nav aria-label="Principal">
             <a class="active" href="#inicio" data-view-target="inicio"><span aria-hidden="true">⌂</span><span>Inicio</span></a>
-            <a href="#perfil" data-view-target="perfil"><span aria-hidden="true">◇</span><span>Mi perfil</span></a>
-            <a href="#seguridad" data-view-target="seguridad"><span aria-hidden="true">⌾</span><span>Seguridad</span></a>
-            <a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a>
+            <?php if ($canProfile): ?><a href="#perfil" data-view-target="perfil"><span aria-hidden="true">◇</span><span>Mi perfil</span></a><?php endif; ?>
+            <?php if ($canSecurity): ?><a href="#seguridad" data-view-target="seguridad"><span aria-hidden="true">⌾</span><span>Seguridad</span></a><?php endif; ?>
+            <?php if ($canManagePermissions): ?><a href="#permisos" data-view-target="permisos"><span aria-hidden="true">▦</span><span>Permisos</span></a><?php endif; ?>
+            <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
         <div class="sidebar-foot">Fase 2 · Sesión protegida</div>
@@ -86,6 +93,9 @@ $formatDate = static function (?string $value): string {
         <?php if ($profile['force_password_change']): ?>
             <div class="security-banner" role="alert">Debes cambiar la contraseña temporal antes de continuar.</div>
         <?php endif; ?>
+        <?php if ($profile['role']['code'] === 'guard'): ?>
+            <div class="security-banner validation-banner" role="status">Acceso web del Vigilante habilitado únicamente para validación local. El acceso operativo definitivo utilizará QR + PIN.</div>
+        <?php endif; ?>
 
         <section class="app-view" data-view="inicio">
             <section class="hero phase-two">
@@ -93,7 +103,7 @@ $formatDate = static function (?string $value): string {
                     <span class="hero-kicker">SESIÓN SEGURA · PERMISOS EN BACKEND</span>
                     <h2>Bienvenido,<br><?= htmlspecialchars(explode(' ', $profile['full_name'])[0]) ?></h2>
                     <p>Tu acceso está protegido y limitado por el rol y los permisos configurados para tu cuenta.</p>
-                    <a class="primary-button" href="#seguridad" data-view-target="seguridad">Revisar seguridad <span>→</span></a>
+                    <?php if ($canSecurity): ?><a class="primary-button" href="#seguridad" data-view-target="seguridad">Revisar seguridad <span>→</span></a><?php endif; ?>
                 </div>
                 <img src="assets/images/logo.svg" alt="Escudo del Sistema de Vigilancia">
             </section>
@@ -106,7 +116,7 @@ $formatDate = static function (?string $value): string {
             </section>
         </section>
 
-        <section class="app-view" data-view="perfil" hidden>
+        <?php if ($canProfile): ?><section class="app-view" data-view="perfil" hidden>
             <section class="page-intro">
                 <div><p class="eyebrow">Tu cuenta</p><h2>Mi perfil</h2><p>Información de identidad y alcance asociada a tu sesión.</p></div>
                 <span class="profile-avatar"><?= htmlspecialchars($initials) ?></span>
@@ -121,14 +131,14 @@ $formatDate = static function (?string $value): string {
                 <article class="profile-card"><small>CONTRASEÑA ACTUALIZADA</small><strong><?= htmlspecialchars($formatDate($profile['password_changed_at'])) ?></strong></article>
                 <article class="profile-card"><small>PREFERENCIA VISUAL</small><strong id="profileTheme"><?= htmlspecialchars($themeLabels[$profile['theme']] ?? $profile['theme']) ?></strong></article>
             </section>
-        </section>
+        </section><?php endif; ?>
 
-        <section class="app-view" data-view="seguridad" hidden>
+        <?php if ($canSecurity): ?><section class="app-view" data-view="seguridad" hidden>
             <section class="page-intro compact">
                 <div><p class="eyebrow">Protección de la cuenta</p><h2>Seguridad</h2><p>Administra tu contraseña, sesiones activas y permisos efectivos.</p></div>
             </section>
             <section class="security-layout">
-                <article class="security-card">
+                <?php if ($canChangePassword): ?><article class="security-card">
                     <p class="eyebrow">Credenciales</p>
                     <h2>Cambiar contraseña</h2>
                     <p>Al actualizarla se cerrarán todas tus demás sesiones activas.</p>
@@ -139,7 +149,7 @@ $formatDate = static function (?string $value): string {
                         <div class="form-message" id="passwordMessage" role="status"></div>
                         <button class="submit" type="submit">Actualizar contraseña</button>
                     </form>
-                </article>
+                </article><?php endif; ?>
                 <article class="security-card permission-card">
                     <p class="eyebrow">Autorización efectiva</p>
                     <h2>Permisos de la sesión</h2>
@@ -149,7 +159,7 @@ $formatDate = static function (?string $value): string {
                         <?php endforeach; ?>
                     </ul>
                 </article>
-                <?php if (in_array('auth.sessions.view', $profile['permissions'], true)): ?>
+                <?php if ($canViewSessions): ?>
                     <article class="security-card sessions-card">
                         <div class="card-heading"><div><p class="eyebrow">Dispositivos</p><h2>Sesiones activas</h2></div><button class="ghost-button" id="refreshSessions" type="button">Actualizar</button></div>
                         <p>Puedes revocar accesos abiertos en otros navegadores o dispositivos.</p>
@@ -157,7 +167,23 @@ $formatDate = static function (?string $value): string {
                     </article>
                 <?php endif; ?>
             </section>
-        </section>
+        </section><?php endif; ?>
+
+        <?php if ($canManagePermissions): ?><section class="app-view" data-view="permisos" hidden>
+            <section class="page-intro compact">
+                <div><p class="eyebrow">Control de autorización</p><h2>Permisos por rol</h2><p>Define qué módulos y acciones puede utilizar cada nivel de acceso.</p></div>
+            </section>
+            <section class="permission-admin">
+                <article class="security-card role-selector">
+                    <label for="permissionRole">Rol a configurar</label>
+                    <select id="permissionRole" aria-describedby="permissionSummary"></select>
+                    <p id="permissionSummary" class="muted">Consultando matriz de permisos…</p>
+                </article>
+                <div class="permission-modules" id="permissionMatrix" aria-live="polite">
+                    <article class="security-card"><p class="muted">Consultando permisos…</p></article>
+                </div>
+            </section>
+        </section><?php endif; ?>
         <footer>© 2026 Sistema de Vigilancia · Fase 2 · Autenticación y permisos</footer>
     </main>
 </div>

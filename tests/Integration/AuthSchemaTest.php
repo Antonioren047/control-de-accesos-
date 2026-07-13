@@ -61,4 +61,39 @@ final class AuthSchemaTest extends TestCase
             'supervisor' => 2,
         ], $result);
     }
+
+    public function testPermisosOperativosBaseEstanSeparadosPorRol(): void
+    {
+        $pdo = $this->connection();
+        $statement = $pdo->query(
+            "SELECT r.code,p.code AS permission_code FROM role_permissions rp
+             JOIN roles r ON r.id=rp.role_id
+             JOIN permissions p ON p.id=rp.permission_id
+             WHERE r.code IN ('admin','supervisor','guard','resident')
+               AND p.code IN ('users.manage','operations.view','visits.manage','permissions.manage')"
+        );
+        $result = [];
+        foreach ($statement->fetchAll() as $row) $result[$row['code']][] = $row['permission_code'];
+        foreach ($result as &$permissions) sort($permissions);
+
+        self::assertSame(['users.manage'], $result['admin'] ?? []);
+        self::assertSame(['operations.view'], $result['supervisor'] ?? []);
+        self::assertSame(['operations.view'], $result['guard'] ?? []);
+        self::assertSame(['visits.manage'], $result['resident'] ?? []);
+    }
+
+    public function testSoloSuperadministradorAdministraLaMatrizPorDefecto(): void
+    {
+        $pdo = $this->connection();
+        $roles = $pdo->query(
+            "SELECT r.code FROM role_permissions rp
+             JOIN roles r ON r.id=rp.role_id
+             JOIN permissions p ON p.id=rp.permission_id
+             WHERE p.code='permissions.manage' ORDER BY r.code"
+        )->fetchAll(PDO::FETCH_COLUMN);
+        self::assertSame(['superadmin'], $roles);
+        self::assertContains((string) $pdo->query(
+            "SELECT setting_value FROM system_settings WHERE setting_key='security.guard_web_login_enabled'"
+        )->fetchColumn(), ['0', '1']);
+    }
 }

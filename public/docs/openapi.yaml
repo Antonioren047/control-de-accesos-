@@ -42,3 +42,10 @@ paths:
     post:
       summary: Restablecer contraseña con permiso
       responses: {'200': {description: Contraseña restablecida}, '403': {description: Sin permiso}}
+  /authorization/roles:
+    get:
+      summary: Consultar matriz de permisos por rol
+      responses: {'200': {description: Matriz disponible}, '403': {description: Sin permiso permissions.manage}}
+    post:
+      summary: Activar o desactivar un permiso para un rol
+      responses: {'200': {description: Permiso actualizado}, '403': {description: Sin permiso}, '422': {description: Datos inválidos}}

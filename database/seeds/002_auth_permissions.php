@@ -8,6 +8,7 @@ return static function (PDO $pdo, bool $demo = false): void {
         ['auth.sessions.view', 'auth', 'view_sessions', 'Consultar sesiones'],
         ['auth.sessions.revoke', 'auth', 'revoke_sessions', 'Revocar sesiones'],
         ['users.password_reset', 'users', 'password_reset', 'Restablecer contraseñas'],
+        ['permissions.manage', 'permissions', 'manage', 'Administrar permisos por rol'],
     ];
 
     $permission = $pdo->prepare(
@@ -19,6 +20,11 @@ return static function (PDO $pdo, bool $demo = false): void {
         $permission->execute($row);
     }
 
+    $defaultsSeeded = (bool) $pdo->query(
+        "SELECT COUNT(*) FROM system_settings WHERE setting_key='authorization.defaults_seeded'"
+    )->fetchColumn();
+
+    if (!$defaultsSeeded) {
     $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
@@ -31,7 +37,7 @@ return static function (PDO $pdo, bool $demo = false): void {
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
              'auth.profile.view','auth.password.change','auth.sessions.view',
-             'auth.sessions.revoke','users.password_reset'
+             'auth.sessions.revoke','users.password_reset','system.view','users.manage'
          ) WHERE r.code='admin'"
     );
 
@@ -39,16 +45,33 @@ return static function (PDO $pdo, bool $demo = false): void {
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
-             'auth.profile.view','auth.password.change','auth.sessions.view','auth.sessions.revoke'
-         ) WHERE r.code IN ('supervisor','resident')"
+             'auth.profile.view','auth.password.change','auth.sessions.view','auth.sessions.revoke',
+             'system.view','operations.view'
+         ) WHERE r.code='supervisor'"
     );
 
     $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
-         FROM roles r JOIN permissions p ON p.code IN ('auth.profile.view','auth.password.change')
+         FROM roles r JOIN permissions p ON p.code IN (
+             'auth.profile.view','auth.password.change','auth.sessions.view','auth.sessions.revoke',
+             'system.view','visits.manage'
+         ) WHERE r.code='resident'"
+    );
+
+    $pdo->exec(
+        "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
+         SELECT r.id,p.id,UTC_TIMESTAMP()
+         FROM roles r JOIN permissions p ON p.code IN (
+             'auth.profile.view','auth.password.change','system.view','operations.view'
+         )
          WHERE r.code='guard'"
     );
+    $pdo->exec(
+        "INSERT INTO system_settings(setting_key,setting_value,value_type,is_public,created_at,updated_at)
+         VALUES('authorization.defaults_seeded','1','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
+    );
+    }
 
     $settings = [
         ['security.max_user_sessions', '5', 'integer', 0],
@@ -63,4 +86,12 @@ return static function (PDO $pdo, bool $demo = false): void {
     foreach ($settings as $row) {
         $setting->execute($row);
     }
+
+    // Desactivado por defecto. En desarrollo permite validar el rol Vigilante
+    // con correo y contraseña mientras se implementa el acceso definitivo QR + PIN.
+    $pdo->exec(
+        "INSERT IGNORE INTO system_settings(
+            setting_key,setting_value,value_type,is_public,created_at,updated_at
+         ) VALUES('security.guard_web_login_enabled','0','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
+    );
 };
