@@ -25,6 +25,8 @@ El panel utiliza navegación ligera por vistas para Inicio, Mi perfil, Seguridad
 
 Para validar localmente al Vigilante antes de implementar QR + PIN puede establecerse `security.guard_web_login_enabled=1`. La semilla lo crea desactivado y no sobreescribe una habilitación local existente. En producción debe permanecer en `0`.
 
+El catálogo compartido `config/modules.php` relaciona cada módulo con sus acciones y define la asignación inicial de Administrador, Supervisor, Vigilante y Residente. El panel y la semilla consumen la misma fuente para evitar diferencias entre permisos almacenados y navegación visible. La marca `authorization.module_defaults_v1` aplica esta ampliación una sola vez y conserva cambios posteriores realizados desde la matriz.
+
 ## Alcance
 
 No se implementó el acceso QR/PIN de vigilantes, recuperación de contraseña por correo ni alcances por clientes/lugares. Corresponden a fases posteriores.

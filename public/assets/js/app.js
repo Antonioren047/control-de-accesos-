@@ -39,6 +39,9 @@ const viewMeta = {
     seguridad: ['Protección de la cuenta', 'Seguridad'],
     permisos: ['Control de autorización', 'Permisos por rol'],
 };
+document.querySelectorAll('[data-view][data-view-title]').forEach(section => {
+    viewMeta[section.dataset.view] = [section.dataset.viewEyebrow, section.dataset.viewTitle];
+});
 
 function activateView(requested, updateHash = true) {
     const requestedView = viewMeta[requested] ? requested : 'inicio';

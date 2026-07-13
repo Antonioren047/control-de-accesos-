@@ -2,14 +2,15 @@
 declare(strict_types=1);
 
 return static function (PDO $pdo, bool $demo = false): void {
-    $permissions = [
+    $moduleConfig = require dirname(__DIR__, 2) . '/config/modules.php';
+    $permissions = array_merge([
         ['auth.profile.view', 'auth', 'view', 'Consultar perfil propio'],
         ['auth.password.change', 'auth', 'change', 'Cambiar contraseña propia'],
         ['auth.sessions.view', 'auth', 'view_sessions', 'Consultar sesiones'],
         ['auth.sessions.revoke', 'auth', 'revoke_sessions', 'Revocar sesiones'],
         ['users.password_reset', 'users', 'password_reset', 'Restablecer contraseñas'],
         ['permissions.manage', 'permissions', 'manage', 'Administrar permisos por rol'],
-    ];
+    ], $moduleConfig['permissions']);
 
     $permission = $pdo->prepare(
         "INSERT INTO permissions(code,module,action,name,created_at)
@@ -25,14 +26,14 @@ return static function (PDO $pdo, bool $demo = false): void {
     )->fetchColumn();
 
     if (!$defaultsSeeded) {
-    $pdo->exec(
+        $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r CROSS JOIN permissions p
          WHERE r.code='superadmin'"
     );
 
-    $pdo->exec(
+        $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
@@ -41,7 +42,7 @@ return static function (PDO $pdo, bool $demo = false): void {
          ) WHERE r.code='admin'"
     );
 
-    $pdo->exec(
+        $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
@@ -50,7 +51,7 @@ return static function (PDO $pdo, bool $demo = false): void {
          ) WHERE r.code='supervisor'"
     );
 
-    $pdo->exec(
+        $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
@@ -59,7 +60,7 @@ return static function (PDO $pdo, bool $demo = false): void {
          ) WHERE r.code='resident'"
     );
 
-    $pdo->exec(
+        $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
@@ -67,10 +68,31 @@ return static function (PDO $pdo, bool $demo = false): void {
          )
          WHERE r.code='guard'"
     );
-    $pdo->exec(
+        $pdo->exec(
         "INSERT INTO system_settings(setting_key,setting_value,value_type,is_public,created_at,updated_at)
          VALUES('authorization.defaults_seeded','1','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
     );
+    }
+
+    $moduleDefaultsSeeded = (bool) $pdo->query(
+        "SELECT COUNT(*) FROM system_settings WHERE setting_key='authorization.module_defaults_v1'"
+    )->fetchColumn();
+    if (!$moduleDefaultsSeeded) {
+        $roleDefaults = $moduleConfig['roles'];
+        $roleDefaults['superadmin'] = array_column($moduleConfig['permissions'], 0);
+        foreach ($roleDefaults as $roleCode => $permissionCodes) {
+            $placeholders = implode(',', array_fill(0, count($permissionCodes), '?'));
+            $assign = $pdo->prepare(
+                "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
+                 SELECT r.id,p.id,UTC_TIMESTAMP() FROM roles r JOIN permissions p
+                 WHERE r.code=? AND p.code IN ($placeholders)"
+            );
+            $assign->execute(array_merge([$roleCode], $permissionCodes));
+        }
+        $pdo->exec(
+            "INSERT INTO system_settings(setting_key,setting_value,value_type,is_public,created_at,updated_at)
+             VALUES('authorization.module_defaults_v1','1','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
+        );
     }
 
     $settings = [

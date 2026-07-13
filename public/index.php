@@ -29,6 +29,15 @@ $canViewSessions = in_array('auth.sessions.view', $profile['permissions'], true)
 $canSecurity = $canChangePassword || $canViewSessions;
 $canManagePermissions = in_array('permissions.manage', $profile['permissions'], true);
 $canViewApi = in_array('system.configure', $profile['permissions'], true);
+$moduleConfig = require $root . '/config/modules.php';
+$permissionNames = [];
+foreach ($moduleConfig['permissions'] as $permissionDefinition) {
+    $permissionNames[$permissionDefinition[0]] = $permissionDefinition[3];
+}
+$availableModules = array_filter(
+    $moduleConfig['modules'],
+    static fn (array $module): bool => array_intersect($module['permissions'], $profile['permissions']) !== []
+);
 $names = preg_split('/\s+/', trim($profile['full_name'])) ?: [];
 $initials = strtoupper(substr($names[0] ?? 'U', 0, 1) . substr($names[1] ?? '', 0, 1));
 $themeLabels = ['auto' => 'Automático', 'light' => 'Claro', 'dark' => 'Oscuro'];
@@ -63,6 +72,11 @@ $formatDate = static function (?string $value): string {
         </a>
         <nav aria-label="Principal">
             <a class="active" href="#inicio" data-view-target="inicio"><span aria-hidden="true">⌂</span><span>Inicio</span></a>
+            <?php foreach ($availableModules as $moduleId => $module): ?>
+                <a href="#<?= htmlspecialchars($moduleId) ?>" data-view-target="<?= htmlspecialchars($moduleId) ?>" title="<?= htmlspecialchars($module['label']) ?>">
+                    <span aria-hidden="true"><?= htmlspecialchars($module['icon']) ?></span><span><?= htmlspecialchars($module['label']) ?></span>
+                </a>
+            <?php endforeach; ?>
             <?php if ($canProfile): ?><a href="#perfil" data-view-target="perfil"><span aria-hidden="true">◇</span><span>Mi perfil</span></a><?php endif; ?>
             <?php if ($canSecurity): ?><a href="#seguridad" data-view-target="seguridad"><span aria-hidden="true">⌾</span><span>Seguridad</span></a><?php endif; ?>
             <?php if ($canManagePermissions): ?><a href="#permisos" data-view-target="permisos"><span aria-hidden="true">▦</span><span>Permisos</span></a><?php endif; ?>
@@ -113,8 +127,43 @@ $formatDate = static function (?string $value): string {
             <section class="status-grid auth-grid">
                 <article class="status-card"><span class="card-icon">✓</span><div><small>ESTADO</small><h3>Sesión activa</h3><p>Expiración máxima de 24 horas</p></div><span class="badge success">Protegida</span></article>
                 <article class="status-card"><span class="card-icon">◇</span><div><small>ROL BASE</small><h3><?= htmlspecialchars($profile['role']['name']) ?></h3><p><?= htmlspecialchars($profile['company']['name']) ?></p></div><span class="badge neutral"><?= count($profile['permissions']) ?> permisos</span></article>
+                <article class="status-card"><span class="card-icon">▦</span><div><small>MÓDULOS</small><h3><?= count($availableModules) ?> autorizados</h3><p>Visibles según tu rol y permisos efectivos</p></div><span class="badge success">Restringidos</span></article>
             </section>
         </section>
+
+        <?php foreach ($availableModules as $moduleId => $module):
+            $grantedModulePermissions = array_values(array_intersect($module['permissions'], $profile['permissions']));
+        ?>
+            <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
+                <section class="page-intro module-intro">
+                    <div>
+                        <p class="eyebrow"><?= htmlspecialchars($module['eyebrow']) ?></p>
+                        <h2><?= htmlspecialchars($module['title']) ?></h2>
+                        <p><?= htmlspecialchars($module['description']) ?></p>
+                    </div>
+                    <span class="module-icon" aria-hidden="true"><?= htmlspecialchars($module['icon']) ?></span>
+                </section>
+                <section class="module-shell">
+                    <article class="security-card module-status-card">
+                        <div><p class="eyebrow">Acceso concedido</p><h3>Módulo disponible para <?= htmlspecialchars($profile['role']['name']) ?></h3></div>
+                        <span class="badge success">Autorizado</span>
+                    </article>
+                    <article class="security-card">
+                        <p class="eyebrow">Acciones permitidas</p>
+                        <div class="module-actions">
+                            <?php foreach ($grantedModulePermissions as $permissionCode): ?>
+                                <span><strong><?= htmlspecialchars($permissionNames[$permissionCode] ?? $permissionCode) ?></strong><small><?= htmlspecialchars($permissionCode) ?></small></span>
+                            <?php endforeach; ?>
+                        </div>
+                    </article>
+                    <article class="security-card phase-notice">
+                        <p class="eyebrow">Desarrollo por fases</p>
+                        <h3>Interfaz de acceso preparada</h3>
+                        <p>La operación funcional de este módulo corresponde a la Fase <?= (int) $module['phase'] ?>. Su acceso ya queda gobernado por permisos y no se muestra a usuarios no autorizados.</p>
+                    </article>
+                </section>
+            </section>
+        <?php endforeach; ?>
 
         <?php if ($canProfile): ?><section class="app-view" data-view="perfil" hidden>
             <section class="page-intro">

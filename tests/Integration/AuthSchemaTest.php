@@ -76,7 +76,7 @@ final class AuthSchemaTest extends TestCase
         foreach ($statement->fetchAll() as $row) $result[$row['code']][] = $row['permission_code'];
         foreach ($result as &$permissions) sort($permissions);
 
-        self::assertSame(['users.manage'], $result['admin'] ?? []);
+        self::assertSame(['operations.view', 'users.manage'], $result['admin'] ?? []);
         self::assertSame(['operations.view'], $result['supervisor'] ?? []);
         self::assertSame(['operations.view'], $result['guard'] ?? []);
         self::assertSame(['visits.manage'], $result['resident'] ?? []);
@@ -95,5 +95,23 @@ final class AuthSchemaTest extends TestCase
         self::assertContains((string) $pdo->query(
             "SELECT setting_value FROM system_settings WHERE setting_key='security.guard_web_login_enabled'"
         )->fetchColumn(), ['0', '1']);
+    }
+
+    public function testPermisosDeModuloDistinguenAdministradorYResidente(): void
+    {
+        $pdo = $this->connection();
+        $statement = $pdo->query(
+            "SELECT r.code,p.code AS permission_code FROM role_permissions rp
+             JOIN roles r ON r.id=rp.role_id
+             JOIN permissions p ON p.id=rp.permission_id
+             WHERE r.code IN ('admin','resident')
+               AND p.code IN ('clients.manage','locations.manage','visits.manage','providers.create','reports.own_history')
+             ORDER BY r.code,p.code"
+        );
+        $permissions = ['admin' => [], 'resident' => []];
+        foreach ($statement->fetchAll() as $row) $permissions[$row['code']][] = $row['permission_code'];
+
+        self::assertSame(['clients.manage', 'locations.manage'], $permissions['admin']);
+        self::assertSame(['providers.create', 'reports.own_history', 'visits.manage'], $permissions['resident']);
     }
 }
