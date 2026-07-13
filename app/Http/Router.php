@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1); namespace Vigilancia\Http; use Vigilancia\Exceptions\HttpException;
+final class Router{private array $routes=[];public function get(string $path,callable $handler):void{$this->add('GET',$path,$handler);}public function post(string $path,callable $handler):void{$this->add('POST',$path,$handler);}public function add(string $method,string $path,callable $handler):void{$this->routes[$method][$path]=$handler;}public function dispatch(Request $request):mixed{$handler=$this->routes[$request->method][$request->path]??null;if(!$handler)throw new HttpException('Recurso no encontrado.',404);return $handler($request);}}

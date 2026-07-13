@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1); namespace Vigilancia\Support;
+final class Config{public static function app():array{return ['name'=>Env::get('APP_NAME','Sistema de Vigilancia'),'env'=>Env::get('APP_ENV','production'),'debug'=>Env::bool('APP_DEBUG'),'url'=>rtrim((string)Env::get('APP_URL',''),'/'),'timezone'=>Env::get('APP_TIMEZONE','America/Mexico_City')];}public static function database():array{return ['host'=>Env::get('DB_HOST','127.0.0.1'),'port'=>(int)Env::get('DB_PORT',3306),'database'=>Env::get('DB_DATABASE',''),'username'=>Env::get('DB_USERNAME',''),'password'=>Env::get('DB_PASSWORD',''),'charset'=>Env::get('DB_CHARSET','utf8mb4')];}}

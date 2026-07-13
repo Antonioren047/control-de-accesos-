@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1); namespace Vigilancia\Http;
+final class JsonResponse{public static function success(string $message,mixed $data=[],int $status=200):void{self::send(ResponsePayload::success($message,$data),$status);}public static function error(string $message,array $errors=[],int $status=400):void{self::send(ResponsePayload::error($message,$errors),$status);}private static function send(array $payload,int $status):void{http_response_code($status);header('Content-Type: application/json; charset=utf-8');header('X-Content-Type-Options: nosniff');echo json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES|JSON_THROW_ON_ERROR);exit;}}

@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace Vigilancia\Tests\Unit;use PHPUnit\Framework\TestCase;use Vigilancia\Support\Config;final class ConfigTest extends TestCase{public function testConfiguracionTieneZonaHoraria():void{$this->assertNotEmpty(Config::app()['timezone']);}public function testConfiguracionPdoDesactivaEmulacionPorContrato():void{$this->assertArrayHasKey('charset',Config::database());}}

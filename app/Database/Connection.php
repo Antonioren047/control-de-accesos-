@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1); namespace Vigilancia\Database; use PDO;use PDOException;use RuntimeException;
+final class Connection{public static function make(array $config,bool $withDatabase=true):PDO{$db=$withDatabase&&$config['database']!==''?';dbname='.$config['database']:'';$dsn=sprintf('mysql:host=%s;port=%d%s;charset=%s',$config['host'],$config['port'],$db,$config['charset']);try{return new PDO($dsn,$config['username'],$config['password'],[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,PDO::ATTR_EMULATE_PREPARES=>false]);}catch(PDOException $e){throw new RuntimeException('No fue posible conectar con la base de datos.',0,$e);}}}

@@ -1,0 +1,15 @@
+Options -Indexes
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^api(?:/(.*))?$ api/index.php [QSA,L]
+RewriteRule ^ index.php [L]
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "camera=(self), geolocation=(), microphone=()"
+Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self'; script-src 'self' https://cdn.jsdelivr.net; img-src 'self' data:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+</IfModule>
+<FilesMatch "^\."><Require all denied></FilesMatch>

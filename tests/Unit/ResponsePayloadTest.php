@@ -1,0 +1,2 @@
+<?php
+declare(strict_types=1);namespace Vigilancia\Tests\Unit;use PHPUnit\Framework\TestCase;use Vigilancia\Http\ResponsePayload;final class ResponsePayloadTest extends TestCase{public function testContratoExitoso():void{$payload=ResponsePayload::success('Correcto',['id'=>1]);$this->assertSame(['success'=>true,'message'=>'Correcto','data'=>['id'=>1]],$payload);}public function testContratoError():void{$payload=ResponsePayload::error('Inválido',['field'=>['Requerido']]);$this->assertFalse($payload['success']);$this->assertArrayHasKey('errors',$payload);}}

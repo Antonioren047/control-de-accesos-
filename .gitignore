@@ -1,0 +1,13 @@
+/.env
+/vendor/
+/.phpunit.cache/
+/storage/logs/*
+/storage/evidence/*
+/storage/cache/*
+/storage/temp/*
+/storage/installed.lock
+!/storage/**/.gitkeep
+*.local.php
+*.log
+/.idea/
+/.vscode/
