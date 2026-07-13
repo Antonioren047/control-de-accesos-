@@ -38,4 +38,27 @@ final class AuthSchemaTest extends TestCase
         );
         self::assertCount(2, $statement->fetchAll(PDO::FETCH_COLUMN));
     }
+
+    public function testRolesWebPuedenConsultarYRevocarSusPropiasSesiones(): void
+    {
+        $pdo = $this->connection();
+        $statement = $pdo->query(
+            "SELECT r.code,COUNT(DISTINCT p.code) AS permission_count
+             FROM roles r
+             JOIN role_permissions rp ON rp.role_id=r.id
+             JOIN permissions p ON p.id=rp.permission_id
+             WHERE r.code IN ('superadmin','admin','supervisor','resident')
+               AND p.code IN ('auth.sessions.view','auth.sessions.revoke')
+             GROUP BY r.code ORDER BY r.code"
+        );
+        $result = [];
+        foreach ($statement->fetchAll() as $row) $result[$row['code']] = (int) $row['permission_count'];
+
+        self::assertSame([
+            'admin' => 2,
+            'resident' => 2,
+            'superadmin' => 2,
+            'supervisor' => 2,
+        ], $result);
+    }
 }

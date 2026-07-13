@@ -23,4 +23,6 @@ $router->post('/auth/logout', [$authController, 'logout']);
 $router->get('/auth/me', [$authController, 'me']);
 $router->post('/auth/password', [$authController, 'changePassword']);
 $router->post('/auth/theme', [$authController, 'updateTheme']);
+$router->get('/auth/sessions', [$authController, 'sessions']);
+$router->post('/auth/sessions/revoke', [$authController, 'revokeSession']);
 $router->post('/users/password-reset', [$userSecurityController, 'resetPassword']);

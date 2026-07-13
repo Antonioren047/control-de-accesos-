@@ -55,4 +55,18 @@ final class AuthController
         $this->auth->updateTheme($user, (string) ($request->body['theme'] ?? ''));
         JsonResponse::success('Preferencia de tema guardada.');
     }
+
+    public function sessions(): void
+    {
+        $user = $this->auth->current();
+        JsonResponse::success('Sesiones activas.', ['sessions' => $this->auth->sessions($user)]);
+    }
+
+    public function revokeSession(Request $request): void
+    {
+        CsrfMiddleware::verify($request->header('x-csrf-token'));
+        $user = $this->auth->current();
+        $this->auth->revokeSession($user, (int) ($request->body['session_id'] ?? 0));
+        JsonResponse::success('Sesión revocada correctamente.');
+    }
 }

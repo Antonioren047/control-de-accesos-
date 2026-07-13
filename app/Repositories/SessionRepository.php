@@ -49,6 +49,28 @@ final class SessionRepository
         )->execute([$sessionId]);
     }
 
+    public function activeForUser(int $userId): array
+    {
+        $statement = $this->pdo->prepare(
+            "SELECT id,ip_address,user_agent,last_activity_at,expires_at,created_at
+             FROM user_sessions
+             WHERE user_id=? AND revoked_at IS NULL AND expires_at>UTC_TIMESTAMP()
+             ORDER BY last_activity_at DESC"
+        );
+        $statement->execute([$userId]);
+        return $statement->fetchAll();
+    }
+
+    public function revokeOwned(int $sessionId, int $userId): bool
+    {
+        $statement = $this->pdo->prepare(
+            "UPDATE user_sessions SET revoked_at=UTC_TIMESTAMP()
+             WHERE id=? AND user_id=? AND revoked_at IS NULL"
+        );
+        $statement->execute([$sessionId, $userId]);
+        return $statement->rowCount() === 1;
+    }
+
     public function revokeAll(int $userId, ?int $exceptSessionId = null): void
     {
         $sql = "UPDATE user_sessions SET revoked_at=UTC_TIMESTAMP() WHERE user_id=? AND revoked_at IS NULL";

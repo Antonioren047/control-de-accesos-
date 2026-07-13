@@ -17,6 +17,11 @@ Cada petición protegida exige una sesión PHP válida, token no revocado, expir
 - El restablecimiento administrativo requiere `users.password_reset`, fuerza cambio posterior y revoca todas las sesiones del usuario.
 - La duración máxima es 24 horas.
 - El máximo predeterminado es cinco sesiones; el rol vigilante queda limitado a una como preparación para su flujo operativo futuro.
+- La vista Seguridad consulta las sesiones propias con `GET /auth/sessions` y permite revocar otra sesión con `POST /auth/sessions/revoke`.
+
+## Interfaz autenticada
+
+El panel utiliza navegación ligera por vistas para Inicio, Mi perfil y Seguridad. Mi perfil presenta identidad, rol, empresa y fechas relevantes. Seguridad permite cambiar la contraseña, consultar permisos y administrar exclusivamente las sesiones pertenecientes al usuario autenticado.
 
 ## Alcance
 

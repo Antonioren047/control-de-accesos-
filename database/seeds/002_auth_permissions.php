@@ -38,8 +38,16 @@ return static function (PDO $pdo, bool $demo = false): void {
     $pdo->exec(
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
+         FROM roles r JOIN permissions p ON p.code IN (
+             'auth.profile.view','auth.password.change','auth.sessions.view','auth.sessions.revoke'
+         ) WHERE r.code IN ('supervisor','resident')"
+    );
+
+    $pdo->exec(
+        "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
+         SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN ('auth.profile.view','auth.password.change')
-         WHERE r.code IN ('supervisor','guard','resident')"
+         WHERE r.code='guard'"
     );
 
     $settings = [

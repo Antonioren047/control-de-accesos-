@@ -173,6 +173,37 @@ final class AuthService
         $this->users->updateTheme((int) $user['id'], $theme);
     }
 
+    public function sessions(array $user): array
+    {
+        $this->authorization->require($user, 'auth.sessions.view');
+        $currentId = (int) ($user['auth_session_id'] ?? 0);
+
+        return array_map(static fn (array $session): array => [
+            'id' => (int) $session['id'],
+            'ip_address' => $session['ip_address'],
+            'user_agent' => $session['user_agent'],
+            'last_activity_at' => $session['last_activity_at'],
+            'expires_at' => $session['expires_at'],
+            'created_at' => $session['created_at'],
+            'is_current' => (int) $session['id'] === $currentId,
+        ], $this->sessions->activeForUser((int) $user['id']));
+    }
+
+    public function revokeSession(array $user, int $sessionId): void
+    {
+        $this->authorization->require($user, 'auth.sessions.revoke');
+        if ($sessionId <= 0) throw new HttpException('La sesión indicada no es válida.', 422);
+        if ($sessionId === (int) ($user['auth_session_id'] ?? 0)) {
+            throw new HttpException('Usa la opción Salir para cerrar esta sesión.', 422);
+        }
+        if (!$this->sessions->revokeOwned($sessionId, (int) $user['id'])) {
+            throw new HttpException('La sesión no existe o ya fue revocada.', 404);
+        }
+        $this->logs->record((int) $user['id'], 'auth.session_revoked', ClientInfo::ip(), ClientInfo::userAgent(), [
+            'session_id' => $sessionId,
+        ]);
+    }
+
     public function publicUser(array $user): array
     {
         return [
@@ -182,6 +213,10 @@ final class AuthService
             'role' => ['code' => $user['role_code'], 'name' => $user['role_name']],
             'company' => ['id' => (int) $user['surveillance_company_id'], 'name' => $user['company_name']],
             'theme' => $user['theme_preference'] ?? 'auto',
+            'is_active' => (bool) ($user['is_active'] ?? false),
+            'last_login_at' => $user['last_login_at'] ?? null,
+            'password_changed_at' => $user['password_changed_at'] ?? null,
+            'created_at' => $user['created_at'] ?? null,
             'force_password_change' => (bool) ($user['force_password_change'] ?? false),
             'permissions' => $this->authorization->permissionsFor($user),
         ];

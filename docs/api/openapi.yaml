@@ -73,6 +73,20 @@ paths:
                 theme: {type: string, enum: [auto, light, dark]}
       responses:
         '200': {description: Preferencia guardada}
+  /auth/sessions:
+    get:
+      summary: Consultar sesiones activas propias
+      responses:
+        '200': {description: Sesiones activas}
+        '401': {description: Sesión no válida}
+        '403': {description: Permiso auth.sessions.view requerido}
+  /auth/sessions/revoke:
+    post:
+      summary: Revocar una sesión propia distinta de la actual
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Sesión revocada}
+        '404': {description: Sesión inexistente, ajena o ya revocada}
   /users/password-reset:
     post:
       summary: Restablecer administrativamente una contraseña

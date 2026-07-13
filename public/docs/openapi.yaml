@@ -30,6 +30,14 @@ paths:
     post:
       summary: Guardar tema del usuario
       responses: {'200': {description: Tema guardado}}
+  /auth/sessions:
+    get:
+      summary: Consultar sesiones activas propias
+      responses: {'200': {description: Sesiones activas}, '403': {description: Sin permiso}}
+  /auth/sessions/revoke:
+    post:
+      summary: Revocar otra sesión propia
+      responses: {'200': {description: Sesión revocada}, '404': {description: Sesión no encontrada}}
   /users/password-reset:
     post:
       summary: Restablecer contraseña con permiso
