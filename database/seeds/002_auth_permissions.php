@@ -119,6 +119,24 @@ return static function (PDO $pdo, bool $demo = false): void {
         );
     }
 
+    $phaseFourDefaults = (bool) $pdo->query(
+        "SELECT COUNT(*) FROM system_settings WHERE setting_key='authorization.phase4_workforce_defaults_v1'"
+    )->fetchColumn();
+    if (!$phaseFourDefaults) {
+        $defaults = [
+            'superadmin' => ['guards.manage','guards.view','guards.credential','guards.pin_reset','shifts.manage','shifts.view','assignments.manage','assignments.view'],
+            'admin' => ['guards.manage','guards.credential','guards.pin_reset','shifts.manage','assignments.manage'],
+            'supervisor' => ['guards.view','shifts.view','assignments.view','assignments.request_change'],
+            'guard' => ['shifts.view'],
+        ];
+        foreach ($defaults as $roleCode => $permissionCodes) {
+            $placeholders = implode(',', array_fill(0, count($permissionCodes), '?'));
+            $assign = $pdo->prepare("INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at) SELECT r.id,p.id,UTC_TIMESTAMP() FROM roles r JOIN permissions p WHERE r.code=? AND p.code IN ($placeholders)");
+            $assign->execute(array_merge([$roleCode], $permissionCodes));
+        }
+        $pdo->exec("INSERT INTO system_settings(setting_key,setting_value,value_type,is_public,created_at,updated_at) VALUES('authorization.phase4_workforce_defaults_v1','1','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())");
+    }
+
     $settings = [
         ['security.max_user_sessions', '5', 'integer', 0],
         ['security.login_backoff_seconds', '60', 'integer', 0],

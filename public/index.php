@@ -64,6 +64,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/phase2.css">
     <link rel="stylesheet" href="assets/css/phase3.css">
+    <link rel="stylesheet" href="assets/css/phase4.css">
 </head>
 <body>
 <div class="app-shell">
@@ -85,7 +86,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 3 · Organización protegida</div>
+        <div class="sidebar-foot">Fase 4 · Operación planificada</div>
     </aside>
     <main>
         <header class="topbar">
@@ -135,8 +136,8 @@ $formatDate = static function (?string $value): string {
 
         <?php foreach ($availableModules as $moduleId => $module):
             $grantedModulePermissions = array_values(array_intersect($module['permissions'], $profile['permissions']));
-            $isPhaseThreeModule = in_array($moduleId, ['clientes', 'sitios', 'mis_unidades'], true)
-                || ($moduleId === 'usuarios' && in_array('residents.manage', $profile['permissions'], true));
+            $isPhaseThreeModule = in_array($moduleId, ['clientes', 'sitios', 'mis_unidades', 'turnos'], true)
+                || ($moduleId === 'usuarios' && array_intersect(['residents.manage','guards.manage','guards.view'], $profile['permissions']));
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -148,15 +149,24 @@ $formatDate = static function (?string $value): string {
                     <span class="module-icon" aria-hidden="true"><?= htmlspecialchars($module['icon']) ?></span>
                 </section>
                 <?php if ($isPhaseThreeModule): ?>
-                    <section class="organization-workspace" data-organization-module="<?= htmlspecialchars($moduleId) ?>">
+                    <section class="organization-workspace" data-organization-module="<?= htmlspecialchars($moduleId) ?>"
+                        data-can-residents="<?= in_array('residents.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-guards="<?= array_intersect(['guards.manage','guards.view'],$profile['permissions'])?'1':'0' ?>"
+                        data-can-manage-guards="<?= in_array('guards.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-manage-shifts="<?= in_array('shifts.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-manage-assignments="<?= in_array('assignments.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-request-assignment="<?= in_array('assignments.request_change',$profile['permissions'],true)?'1':'0' ?>">
                         <div class="organization-toolbar">
-                            <div><p class="eyebrow">Fase 3 activa</p><h3>Registros dentro de tu alcance</h3></div>
+                            <div><p class="eyebrow"><?= $moduleId==='turnos'?'Fase 4 activa':'Módulo activo' ?></p><h3>Registros dentro de tu alcance</h3></div>
                             <div class="organization-actions">
                                 <?php if ($moduleId === 'clientes' && $profile['role']['code'] === 'superadmin'): ?><button class="submit" type="button" data-organization-create="client">Nuevo cliente</button><?php endif; ?>
                                 <?php if ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="location">Nuevo lugar</button><?php endif; ?>
                                 <?php if ($moduleId === 'sitios' && in_array('access_points.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="access_point">Nuevo punto</button><?php endif; ?>
                                 <?php if ($moduleId === 'sitios' && in_array('units.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="unit">Nueva unidad</button><?php endif; ?>
                                 <?php if ($moduleId === 'usuarios' && in_array('residents.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-organization-create="resident">Nuevo residente</button><?php endif; ?>
+                                <?php if ($moduleId === 'usuarios' && in_array('guards.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="guard">Nuevo vigilante</button><?php endif; ?>
+                                <?php if ($moduleId === 'turnos' && in_array('shifts.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-workforce-create="shift">Nuevo turno</button><?php endif; ?>
+                                <?php if ($moduleId === 'turnos' && in_array('assignments.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="assignment">Nueva asignación</button><?php endif; ?>
                             </div>
                         </div>
                         <div class="organization-content" data-organization-content data-status-entities="<?= $moduleId === 'clientes' && $profile['role']['code'] === 'superadmin' ? 'client' : ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true) ? 'location,access_point,unit' : '') ?>"><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
@@ -251,7 +261,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 3 · Organización y alcances</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 4 · Personal, turnos y asignaciones</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -263,7 +273,16 @@ $formatDate = static function (?string $value): string {
         <button class="submit" type="submit">Guardar registro</button>
     </form>
 </dialog>
+<dialog class="organization-dialog" id="workforceDialog">
+    <form method="dialog" id="workforceForm">
+        <div class="card-heading"><div><p class="eyebrow">Fase 4</p><h2 id="workforceDialogTitle">Nuevo registro</h2></div><button class="ghost-button" value="cancel" type="button" id="closeWorkforceDialog">Cerrar</button></div>
+        <div class="organization-form-grid" id="workforceFields"></div>
+        <div class="form-message" id="workforceMessage" role="status"></div>
+        <button class="submit" type="submit">Guardar registro</button>
+    </form>
+</dialog>
 <script type="module" src="assets/js/app.js"></script>
 <script type="module" src="assets/js/phase3.js"></script>
+<script type="module" src="assets/js/phase4.js"></script>
 </body>
 </html>

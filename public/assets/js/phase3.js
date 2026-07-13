@@ -27,6 +27,7 @@ function section(title, items, columns, entity, statusEntities = []) {
 async function fetchItems(path){const payload=await api(path);return payload.data?.items||[];}
 async function loadWorkspace(module, force=false){
     const workspace=workspaces.find(node=>node.dataset.organizationModule===module); if(!workspace||(!force&&workspace.dataset.loaded==='1'))return;
+    if(module==='usuarios'&&workspace.dataset.canGuards==='1')return;
     const content=workspace.querySelector('[data-organization-content]');content.textContent='Consultando registros…';const statusEntities=(content.dataset.statusEntities||'').split(',').filter(Boolean);
     try{
         const fragment=document.createDocumentFragment();

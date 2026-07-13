@@ -1,6 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación y organización multiempresa de las **Fases 1 a 3** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa y gestión de personal de las **Fases 1 a 4** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+
+La Fase 4 incorpora expedientes de vigilantes, credenciales QR/PIN, turnos multiubicación, rotaciones, sustituciones y asignaciones con bloqueo de traslapes. Consulte [la guía técnica](docs/manual-tecnico/fase-4-personal-turnos.md) y [el manual de usuario](docs/manual-usuario/fase-4.md).
 
 ## Incluido
 
