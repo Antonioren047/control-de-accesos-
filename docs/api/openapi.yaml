@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 2.0.0
-  description: Contrato de autenticación, sesiones y permisos de la Fase 2.
+  version: 3.0.0
+  description: Contrato de autenticación, permisos y estructura multiempresa de la Fase 3.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -107,6 +107,26 @@ paths:
         '200': {description: Permiso actualizado}
         '403': {description: Permiso permissions.manage requerido}
         '422': {description: Datos inválidos}
+  /organization/clients:
+    get: {summary: Listar clientes dentro del alcance, responses: {'200': {description: Clientes autorizados}, '403': {description: Sin permiso}}}
+  /organization/locations:
+    get: {summary: Listar lugares dentro del alcance, responses: {'200': {description: Lugares autorizados}, '403': {description: Sin permiso}}}
+  /organization/access-points:
+    get: {summary: Listar puntos de acceso autorizados, responses: {'200': {description: Puntos autorizados}, '403': {description: Sin permiso}}}
+  /organization/units:
+    get: {summary: Listar unidades autorizadas o propias, responses: {'200': {description: Unidades autorizadas}, '403': {description: Sin permiso}}}
+  /organization/residents:
+    get: {summary: Listar residentes dentro del alcance, responses: {'200': {description: Residentes autorizados}, '403': {description: Sin permiso}}}
+  /organization/create:
+    post:
+      summary: Crear cliente, lugar, punto, unidad o residente
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'201': {description: Registro creado}, '403': {description: Fuera de alcance}, '409': {description: Código o correo duplicado}, '422': {description: Datos inválidos}}
+  /organization/status:
+    post:
+      summary: Activar o desactivar lógicamente un registro
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}
 components:
   parameters:
     CsrfToken:

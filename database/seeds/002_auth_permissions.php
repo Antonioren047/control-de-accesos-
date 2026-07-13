@@ -95,6 +95,30 @@ return static function (PDO $pdo, bool $demo = false): void {
         );
     }
 
+    $phaseThreeDefaults = (bool) $pdo->query(
+        "SELECT COUNT(*) FROM system_settings WHERE setting_key='authorization.phase3_scope_defaults_v1'"
+    )->fetchColumn();
+    if (!$phaseThreeDefaults) {
+        $scopeDefaults = [
+            'superadmin' => ['locations.view', 'access_points.view', 'units.view', 'units.view_own'],
+            'supervisor' => ['locations.view', 'access_points.view', 'units.view'],
+            'resident' => ['units.view_own'],
+        ];
+        foreach ($scopeDefaults as $roleCode => $permissionCodes) {
+            $placeholders = implode(',', array_fill(0, count($permissionCodes), '?'));
+            $assign = $pdo->prepare(
+                "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
+                 SELECT r.id,p.id,UTC_TIMESTAMP() FROM roles r JOIN permissions p
+                 WHERE r.code=? AND p.code IN ($placeholders)"
+            );
+            $assign->execute(array_merge([$roleCode], $permissionCodes));
+        }
+        $pdo->exec(
+            "INSERT INTO system_settings(setting_key,setting_value,value_type,is_public,created_at,updated_at)
+             VALUES('authorization.phase3_scope_defaults_v1','1','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
+        );
+    }
+
     $settings = [
         ['security.max_user_sessions', '5', 'integer', 0],
         ['security.login_backoff_seconds', '60', 'integer', 0],

@@ -1,6 +1,6 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica y autenticación de las **Fases 1 y 2** para una plataforma multiempresa de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación y organización multiempresa de las **Fases 1 a 3** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
 ## Incluido
 
@@ -15,6 +15,9 @@ Base técnica y autenticación de las **Fases 1 y 2** para una plataforma multie
 - Inicio y cierre de sesión, tokens almacenados mediante hash y expiración máxima de 24 horas.
 - Bloqueo progresivo desde el quinto fallo, permisos efectivos en backend y auditoría de seguridad.
 - Cambio de contraseña, revocación de sesiones y preferencia de tema por usuario.
+- Clientes, lugares, puntos de acceso, unidades y residentes con baja lógica.
+- Alcances aislados por cliente, lugar, punto y unidad, aplicados en backend.
+- Paneles SPA de Fase 3 y datos demo idempotentes.
 
 ## Requisitos
 
@@ -54,4 +57,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-No se implementaron autenticación, clientes, lugares, vigilantes, visitas, eventos, supervisiones, reportes ni procesos Cron funcionales. Son Fases 2 a 12 y requieren aprobación expresa.
+Las Fases 1 a 3 están implementadas. Vigilantes, turnos, sesión operativa, visitas, eventos, supervisiones, reportes y Cron corresponden a las Fases 4 a 12.

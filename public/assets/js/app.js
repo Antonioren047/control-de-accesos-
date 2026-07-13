@@ -242,3 +242,5 @@ async function loadPermissionMatrix(force = false) {
 
 permissionRole?.addEventListener('change', renderPermissionMatrix);
 activateView(location.hash.slice(1) || 'inicio', false);
+
+export {api, notify};

@@ -5,8 +5,12 @@ return [
     'permissions' => [
         ['clients.manage', 'clients', 'manage', 'Gestionar clientes'],
         ['locations.manage', 'locations', 'manage', 'Gestionar lugares'],
+        ['locations.view', 'locations', 'view', 'Consultar lugares asignados'],
         ['access_points.manage', 'access_points', 'manage', 'Gestionar puntos de acceso'],
+        ['access_points.view', 'access_points', 'view', 'Consultar puntos de acceso asignados'],
         ['units.manage', 'units', 'manage', 'Gestionar unidades'],
+        ['units.view', 'units', 'view', 'Consultar unidades asignadas'],
+        ['units.view_own', 'units', 'view_own', 'Consultar unidades propias'],
         ['users.manage', 'users', 'manage', 'Gestionar usuarios'],
         ['guards.manage', 'guards', 'manage', 'Gestionar vigilantes'],
         ['guards.view', 'guards', 'view', 'Consultar vigilantes asignados'],
@@ -43,7 +47,8 @@ return [
     ],
     'modules' => [
         'clientes' => ['label' => 'Clientes', 'icon' => '▱', 'eyebrow' => 'Estructura comercial', 'title' => 'Clientes', 'description' => 'Clientes atendidos por la empresa de vigilancia.', 'phase' => 3, 'permissions' => ['clients.manage']],
-        'sitios' => ['label' => 'Lugares y puntos', 'icon' => '⌖', 'eyebrow' => 'Alcance territorial', 'title' => 'Lugares y puntos de acceso', 'description' => 'Instalaciones, puntos de acceso y unidades autorizadas.', 'phase' => 3, 'permissions' => ['locations.manage', 'access_points.manage', 'units.manage']],
+        'sitios' => ['label' => 'Lugares y puntos', 'icon' => '⌖', 'eyebrow' => 'Alcance territorial', 'title' => 'Lugares y puntos de acceso', 'description' => 'Instalaciones, puntos de acceso y unidades autorizadas.', 'phase' => 3, 'permissions' => ['locations.manage', 'locations.view', 'access_points.manage', 'access_points.view', 'units.manage', 'units.view']],
+        'mis_unidades' => ['label' => 'Mis unidades', 'icon' => '⌂', 'eyebrow' => 'Residencia', 'title' => 'Mis unidades', 'description' => 'Casas, departamentos, lotes o naves relacionados con tu cuenta.', 'phase' => 3, 'roles' => ['resident'], 'permissions' => ['units.view_own']],
         'usuarios' => ['label' => 'Usuarios', 'icon' => '♙', 'eyebrow' => 'Administración', 'title' => 'Usuarios y personal', 'description' => 'Usuarios, vigilantes y residentes dentro del alcance permitido.', 'phase' => 3, 'permissions' => ['users.manage', 'guards.manage', 'guards.view', 'residents.manage']],
         'turnos' => ['label' => 'Turnos', 'icon' => '◷', 'eyebrow' => 'Planeación operativa', 'title' => 'Turnos y asignaciones', 'description' => 'Turnos, rotaciones y asignaciones del personal.', 'phase' => 4, 'permissions' => ['shifts.manage', 'shifts.view', 'shifts.novelty', 'assignments.manage', 'assignments.view']],
         'operacion' => ['label' => 'Operación', 'icon' => '◉', 'eyebrow' => 'Control en tiempo real', 'title' => 'Operación', 'description' => 'Sesiones operativas y actividad en los puntos de acceso.', 'phase' => 5, 'permissions' => ['operations.view', 'operational_sessions.close']],
@@ -68,7 +73,7 @@ return [
             'providers.manage', 'events.manage', 'rounds.view', 'reports.view', 'system.configure',
         ],
         'supervisor' => [
-            'guards.view', 'shifts.view', 'assignments.view', 'operations.view',
+            'locations.view', 'access_points.view', 'units.view', 'guards.view', 'shifts.view', 'assignments.view', 'operations.view',
             'operational_sessions.close', 'attendance.view', 'visits.view', 'providers.manage',
             'events.review', 'rounds.review', 'supervisions.manage', 'offline_conflicts.manage',
             'reports.view',
@@ -78,6 +83,6 @@ return [
             'visits.check_in', 'providers.check_in', 'events.create', 'rounds.execute',
             'own_activity.view',
         ],
-        'resident' => ['visits.manage', 'providers.create', 'reports.own_history'],
+        'resident' => ['units.view_own', 'visits.manage', 'providers.create', 'reports.own_history'],
     ],
 ];

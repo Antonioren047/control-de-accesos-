@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 2.0.0
-  description: Consulta el contrato canónico actualizado en docs/api/openapi.yaml.
+  version: 3.0.0
+  description: Fase 3. Consulta el contrato canónico actualizado en docs/api/openapi.yaml.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -49,3 +49,17 @@ paths:
     post:
       summary: Activar o desactivar un permiso para un rol
       responses: {'200': {description: Permiso actualizado}, '403': {description: Sin permiso}, '422': {description: Datos inválidos}}
+  /organization/clients:
+    get: {summary: Listar clientes autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/locations:
+    get: {summary: Listar lugares autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/access-points:
+    get: {summary: Listar puntos autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/units:
+    get: {summary: Listar unidades autorizadas, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/residents:
+    get: {summary: Listar residentes autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/create:
+    post: {summary: Crear registro organizacional, responses: {'201': {description: Registro creado}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}
+  /organization/status:
+    post: {summary: Cambiar estado lógico, responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}}

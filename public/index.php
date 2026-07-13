@@ -37,6 +37,7 @@ foreach ($moduleConfig['permissions'] as $permissionDefinition) {
 $availableModules = array_filter(
     $moduleConfig['modules'],
     static fn (array $module): bool => array_intersect($module['permissions'], $profile['permissions']) !== []
+        && (!isset($module['roles']) || in_array($profile['role']['code'], $module['roles'], true))
 );
 $names = preg_split('/\s+/', trim($profile['full_name'])) ?: [];
 $initials = strtoupper(substr($names[0] ?? 'U', 0, 1) . substr($names[1] ?? '', 0, 1));
@@ -62,6 +63,7 @@ $formatDate = static function (?string $value): string {
     <title>Panel · Sistema de Vigilancia</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/phase2.css">
+    <link rel="stylesheet" href="assets/css/phase3.css">
 </head>
 <body>
 <div class="app-shell">
@@ -83,7 +85,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 2 · Sesión protegida</div>
+        <div class="sidebar-foot">Fase 3 · Organización protegida</div>
     </aside>
     <main>
         <header class="topbar">
@@ -133,6 +135,8 @@ $formatDate = static function (?string $value): string {
 
         <?php foreach ($availableModules as $moduleId => $module):
             $grantedModulePermissions = array_values(array_intersect($module['permissions'], $profile['permissions']));
+            $isPhaseThreeModule = in_array($moduleId, ['clientes', 'sitios', 'mis_unidades'], true)
+                || ($moduleId === 'usuarios' && in_array('residents.manage', $profile['permissions'], true));
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -143,7 +147,21 @@ $formatDate = static function (?string $value): string {
                     </div>
                     <span class="module-icon" aria-hidden="true"><?= htmlspecialchars($module['icon']) ?></span>
                 </section>
-                <section class="module-shell">
+                <?php if ($isPhaseThreeModule): ?>
+                    <section class="organization-workspace" data-organization-module="<?= htmlspecialchars($moduleId) ?>">
+                        <div class="organization-toolbar">
+                            <div><p class="eyebrow">Fase 3 activa</p><h3>Registros dentro de tu alcance</h3></div>
+                            <div class="organization-actions">
+                                <?php if ($moduleId === 'clientes' && $profile['role']['code'] === 'superadmin'): ?><button class="submit" type="button" data-organization-create="client">Nuevo cliente</button><?php endif; ?>
+                                <?php if ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="location">Nuevo lugar</button><?php endif; ?>
+                                <?php if ($moduleId === 'sitios' && in_array('access_points.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="access_point">Nuevo punto</button><?php endif; ?>
+                                <?php if ($moduleId === 'sitios' && in_array('units.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="unit">Nueva unidad</button><?php endif; ?>
+                                <?php if ($moduleId === 'usuarios' && in_array('residents.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-organization-create="resident">Nuevo residente</button><?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="organization-content" data-organization-content data-status-entities="<?= $moduleId === 'clientes' && $profile['role']['code'] === 'superadmin' ? 'client' : ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true) ? 'location,access_point,unit' : '') ?>"><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
+                    </section>
+                <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
                         <div><p class="eyebrow">Acceso concedido</p><h3>Módulo disponible para <?= htmlspecialchars($profile['role']['name']) ?></h3></div>
                         <span class="badge success">Autorizado</span>
@@ -161,7 +179,7 @@ $formatDate = static function (?string $value): string {
                         <h3>Interfaz de acceso preparada</h3>
                         <p>La operación funcional de este módulo corresponde a la Fase <?= (int) $module['phase'] ?>. Su acceso ya queda gobernado por permisos y no se muestra a usuarios no autorizados.</p>
                     </article>
-                </section>
+                </section><?php endif; ?>
             </section>
         <?php endforeach; ?>
 
@@ -233,10 +251,19 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 2 · Autenticación y permisos</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 3 · Organización y alcances</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog class="organization-dialog" id="organizationDialog">
+    <form method="dialog" id="organizationForm">
+        <div class="card-heading"><div><p class="eyebrow">Fase 3</p><h2 id="organizationDialogTitle">Nuevo registro</h2></div><button class="ghost-button" value="cancel" type="button" id="closeOrganizationDialog">Cerrar</button></div>
+        <div class="organization-form-grid" id="organizationFields"></div>
+        <div class="form-message" id="organizationMessage" role="status"></div>
+        <button class="submit" type="submit">Guardar registro</button>
+    </form>
+</dialog>
 <script type="module" src="assets/js/app.js"></script>
+<script type="module" src="assets/js/phase3.js"></script>
 </body>
 </html>
