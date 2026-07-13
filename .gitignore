@@ -4,6 +4,8 @@
 /storage/logs/*
 /storage/evidence/*
 /storage/cache/*
+!/storage/cache/sessions/
+!/storage/cache/sessions/.gitkeep
 /storage/temp/*
 /storage/installed.lock
 !/storage/**/.gitkeep

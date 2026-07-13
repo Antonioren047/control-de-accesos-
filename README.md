@@ -1,6 +1,6 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica de la **Fase 1** para una plataforma multiempresa de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica y autenticación de las **Fases 1 y 2** para una plataforma multiempresa de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
 ## Incluido
 
@@ -12,6 +12,9 @@ Base técnica de la **Fase 1** para una plataforma multiempresa de vigilancia. P
 - Dashboard responsive generado a partir de Google Stitch, tema claro/oscuro/automático y navegación adaptable.
 - Health check, OpenAPI 3.0, Swagger UI y páginas 403/404/500.
 - PHPUnit y documentación inicial para XAMPP/cPanel.
+- Inicio y cierre de sesión, tokens almacenados mediante hash y expiración máxima de 24 horas.
+- Bloqueo progresivo desde el quinto fallo, permisos efectivos en backend y auditoría de seguridad.
+- Cambio de contraseña, revocación de sesiones y preferencia de tema por usuario.
 
 ## Requisitos
 

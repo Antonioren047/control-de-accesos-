@@ -1,35 +1,36 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 1.0.0
-  description: Contrato inicial de la Fase 1.
+  version: 2.0.0
+  description: Consulta el contrato canónico actualizado en docs/api/openapi.yaml.
 servers:
   - url: /control-de-accesos/public/api
 paths:
   /health:
     get:
       summary: Consultar estado del servicio
-      operationId: getHealth
-      responses:
-        '200':
-          description: Servicio disponible
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-components:
-  schemas:
-    SuccessResponse:
-      type: object
-      required: [success, message, data]
-      properties:
-        success: {type: boolean, example: true}
-        message: {type: string}
-        data: {type: object}
-    ErrorResponse:
-      type: object
-      required: [success, message, errors]
-      properties:
-        success: {type: boolean, example: false}
-        message: {type: string}
-        errors: {type: object}
+      responses: {'200': {description: Servicio disponible}}
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      responses: {'200': {description: Sesión iniciada}, '401': {description: Credenciales incorrectas}, '429': {description: Espera progresiva}}
+  /auth/me:
+    get:
+      summary: Consultar sesión y permisos
+      responses: {'200': {description: Sesión activa}, '401': {description: No autenticado}}
+  /auth/logout:
+    post:
+      summary: Cerrar sesión
+      responses: {'200': {description: Sesión cerrada}}
+  /auth/password:
+    post:
+      summary: Cambiar contraseña propia
+      responses: {'200': {description: Contraseña actualizada}, '422': {description: Datos inválidos}}
+  /auth/theme:
+    post:
+      summary: Guardar tema del usuario
+      responses: {'200': {description: Tema guardado}}
+  /users/password-reset:
+    post:
+      summary: Restablecer contraseña con permiso
+      responses: {'200': {description: Contraseña restablecida}, '403': {description: Sin permiso}}
