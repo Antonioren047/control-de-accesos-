@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1); use PDO;
+declare(strict_types=1);
 return static function(PDO $pdo):void{$sql=[
 "CREATE TABLE IF NOT EXISTS roles (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, code VARCHAR(50) NOT NULL UNIQUE, name VARCHAR(100) NOT NULL, description VARCHAR(255) NULL, is_active TINYINT(1) NOT NULL DEFAULT 1, created_at DATETIME NOT NULL, updated_at DATETIME NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 "CREATE TABLE IF NOT EXISTS permissions (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, code VARCHAR(100) NOT NULL UNIQUE, module VARCHAR(60) NOT NULL, action VARCHAR(60) NOT NULL, name VARCHAR(120) NOT NULL, created_at DATETIME NOT NULL, INDEX idx_permissions_module_action(module,action)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
