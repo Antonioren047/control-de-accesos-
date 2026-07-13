@@ -25,7 +25,8 @@ final class CredentialAssetService
             $isPng=extension_loaded('gd')&&class_exists(\Endroid\QrCode\Writer\PngWriter::class);
             $extension=$isPng?'png':'svg';$relative='storage/guards/qr/credential-'.$credentialId.'-'.bin2hex(random_bytes(6)).'.'.$extension;
             $writer=$isPng?new \Endroid\QrCode\Writer\PngWriter():new \Endroid\QrCode\Writer\SvgWriter();
-            $writer->write($qr)->saveToFile($this->root.'/'.$relative);return$relative;
+            $writer->write($qr)->saveToFile($this->root.'/'.$relative);
+            return is_file($this->root.'/'.$relative)&&filesize($this->root.'/'.$relative)>0?$relative:null;
         }catch(\Throwable){return null;}
     }
 }
