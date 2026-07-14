@@ -16,7 +16,7 @@ final class WorkforceRepository
     }
     public function shifts(array $actor):array
     {
-        $sql="SELECT DISTINCT s.id,s.name,TIME_FORMAT(s.start_time,'%H:%i') start_time,TIME_FORMAT(s.end_time,'%H:%i') end_time,s.crosses_midnight,s.tolerance_minutes,s.early_departure_tolerance_minutes,s.overtime_after_minutes,s.applicable_days,s.is_active,GROUP_CONCAT(DISTINCT l.name ORDER BY l.name SEPARATOR ', ') locations FROM shifts s LEFT JOIN shift_locations sl ON sl.shift_id=s.id AND sl.is_active=1 LEFT JOIN locations l ON l.id=sl.location_id";$params=[];
+        $sql="SELECT DISTINCT s.id,s.name,TIME_FORMAT(s.start_time,'%H:%i') start_time,TIME_FORMAT(s.end_time,'%H:%i') end_time,s.crosses_midnight,s.tolerance_minutes,s.early_departure_tolerance_minutes,s.overtime_after_minutes,s.applicable_days,s.is_active,GROUP_CONCAT(DISTINCT l.name ORDER BY l.name SEPARATOR ', ') locations,GROUP_CONCAT(DISTINCT sl.location_id ORDER BY sl.location_id SEPARATOR ',') location_ids FROM shifts s LEFT JOIN shift_locations sl ON sl.shift_id=s.id AND sl.is_active=1 LEFT JOIN locations l ON l.id=sl.location_id";$params=[];
         if($actor['role_code']==='supervisor'){$sql.=" JOIN user_location_scopes ls ON ls.location_id=l.id AND ls.user_id=? AND ls.is_active=1";$params[]=$actor['id'];}
         elseif($actor['role_code']==='guard'){$sql.=" JOIN guard_assignments ga ON ga.shift_id=s.id AND ga.guard_user_id=? AND ga.status='active'";$params[]=$actor['id'];}
         $sql.=" WHERE s.surveillance_company_id=? GROUP BY s.id ORDER BY s.name";$params[]=$actor['surveillance_company_id'];return $this->fetch($sql,$params);
