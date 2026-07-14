@@ -49,7 +49,6 @@ if (isset($_GET['raw'])) {
 }
 
 $csrf = CsrfMiddleware::token();
-$whatsappMessage = 'Te comparto un acceso autorizado. Adjuntaré la imagen QR en este chat.';
 ?>
 <!doctype html>
 <html lang="es">
@@ -63,20 +62,18 @@ $whatsappMessage = 'Te comparto un acceso autorizado. Adjuntaré la imagen QR en
     <style>.qr-sheet{max-width:520px;margin:30px auto;text-align:center}.qr-sheet img{width:min(360px,90%);background:#fff;padding:16px;border-radius:18px}.qr-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}</style>
 </head>
 <body>
-<main class="qr-sheet security-card" data-qr-type="<?= htmlspecialchars($type) ?>" data-qr-id="<?= $id ?>">
+<main class="qr-sheet security-card" data-qr-type="<?= htmlspecialchars($type) ?>" data-qr-id="<?= $id ?>" data-display-name="<?= htmlspecialchars($row['display_name']) ?>" data-location-name="<?= htmlspecialchars($row['location_name']) ?>" data-unit-name="<?= htmlspecialchars($row['unit_name']) ?>" data-reference="<?= htmlspecialchars((string) $row['qr_reference']) ?>">
     <p class="eyebrow">ACCESO SEGURO CON CÓDIGO QR</p>
     <h1><?= htmlspecialchars($row['display_name']) ?></h1>
     <p><?= htmlspecialchars($row['location_name'] . ' · ' . $row['unit_name']) ?></p>
     <img id="qrImage" src="?type=<?= urlencode($type) ?>&amp;id=<?= $id ?>&amp;raw=1" alt="Código QR">
     <p><strong>Referencia:</strong> <?= htmlspecialchars((string) $row['qr_reference']) ?></p>
     <div class="qr-actions">
-        <a class="ghost-button" href="?type=<?= urlencode($type) ?>&amp;id=<?= $id ?>&amp;raw=1&amp;download=1" id="downloadQr">Descargar imagen</a>
+        <button class="ghost-button" type="button" id="downloadQr">Descargar imagen</button>
         <button class="submit" type="button" id="nativeShare">Compartir</button>
-        <a class="ghost-button" id="whatsappShare" target="_blank" rel="noopener" href="https://wa.me/?text=<?= rawurlencode($whatsappMessage) ?>">Abrir WhatsApp</a>
     </div>
-    <p class="form-message" id="shareMessage" role="status"></p>
-    <p class="muted">WhatsApp abrirá un mensaje preparado. Adjunta la imagen descargada; el sistema no afirma que haya sido enviada.</p>
+    <canvas id="shareCanvas" width="900" height="1120" hidden></canvas>
 </main>
-<script src="assets/js/visit-qr.js?v=7.0.1" defer></script>
+<script src="assets/js/visit-qr.js?v=7.0.2" defer></script>
 </body>
 </html>
