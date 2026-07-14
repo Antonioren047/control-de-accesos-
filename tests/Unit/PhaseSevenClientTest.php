@@ -12,6 +12,6 @@ final class PhaseSevenClientTest extends TestCase
 
     public function testQrSeComparteComoArchivoYWhatsAppNoAfirmaEnvio():void
     {
-        $page=file_get_contents(dirname(__DIR__,2).'/public/visit-qr.php');self::assertStringContainsString('new File',$page);self::assertStringContainsString('navigator.share',$page);self::assertStringContainsString('no afirma que haya sido enviada',$page);
+        $page=file_get_contents(dirname(__DIR__,2).'/public/visit-qr.php');$client=file_get_contents(dirname(__DIR__,2).'/public/assets/js/visit-qr.js');self::assertStringContainsString('new File',$client);self::assertStringContainsString('navigator.share',$client);self::assertStringContainsString('no afirma que haya sido enviada',$page);self::assertStringNotContainsString('<script>',$page);
     }
 }
