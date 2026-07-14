@@ -1,8 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 5** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 6** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
-La Fase 5 incorpora acceso operativo por QR + PIN + fotografía, sesión única por vigilante y punto, clasificación de asistencia y cierre supervisado auditado. Consulte [la guía técnica](docs/manual-tecnico/fase-5-operacion-asistencias.md) y [el manual de usuario](docs/manual-usuario/fase-5.md).
+La Fase 6 incorpora Service Worker, cola persistente en IndexedDB, reintentos automáticos, cierre de turno sin conexión y revisión de conflictos o registros vencidos. Consulte [la guía técnica](docs/manual-tecnico/fase-6-operacion-offline.md) y [el manual de usuario](docs/manual-usuario/fase-6.md).
 
 ## Incluido
 
@@ -22,6 +22,9 @@ La Fase 5 incorpora acceso operativo por QR + PIN + fotografía, sesión única 
 - Paneles SPA de Fase 3 y datos demo idempotentes.
 - Acceso operativo responsive, captura de cámara, datos del dispositivo y cierre mediante QR.
 - Asistencias puntuales, retardos, fuera de horario, salidas anticipadas, tiempo extra y turnos incompletos.
+- Dispositivo offline preautorizado por 24 horas, cola idempotente y sincronización en lotes de 50.
+- Conservación de conflictos y operaciones con más de 12 horas para revisión supervisada.
+- Evidencias locales eliminadas solamente después de una confirmación positiva del servidor.
 
 ## Requisitos
 
@@ -61,4 +64,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-Las Fases 1 a 5 están implementadas. Operación sin conexión, visitas, eventos, supervisiones, reportes y Cron corresponden a las Fases 6 a 12.
+Las Fases 1 a 6 están implementadas. Visitas, eventos, recorridos, supervisiones, reportes y Cron corresponden a las Fases 7 a 12.

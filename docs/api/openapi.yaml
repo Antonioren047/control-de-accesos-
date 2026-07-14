@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 3.0.0
-  description: Contrato de autenticación, permisos y estructura multiempresa de la Fase 3.
+  version: 6.0.0
+  description: Contrato de autenticación, organización, operación y sincronización offline hasta la Fase 6.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -127,6 +127,24 @@ paths:
       summary: Activar o desactivar lógicamente un registro
       parameters: [{$ref: '#/components/parameters/CsrfToken'}]
       responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}
+  /offline/sync:
+    post:
+      summary: Sincronizar hasta 50 operaciones de un dispositivo preautorizado
+      parameters:
+        - name: X-Offline-Token
+          in: header
+          required: true
+          schema: {type: string}
+      responses: {'200': {description: Lote procesado de forma idempotente}, '401': {description: Dispositivo no autorizado o expirado}, '422': {description: Operación no permitida}}
+  /offline/conflicts:
+    get:
+      summary: Consultar conflictos y operaciones vencidas dentro del alcance
+      responses: {'200': {description: Registros pendientes de revisión}, '403': {description: Permiso offline_conflicts.manage requerido}}
+  /offline/review:
+    post:
+      summary: Aceptar o rechazar una operación offline con comentario
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'200': {description: Revisión registrada}, '403': {description: Sin permiso o fuera de alcance}, '422': {description: Decisión o comentario inválido}}
 components:
   parameters:
     CsrfToken:

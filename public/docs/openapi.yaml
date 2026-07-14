@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 3.0.0
-  description: Fase 3. Consulta el contrato canónico actualizado en docs/api/openapi.yaml.
+  version: 6.0.0
+  description: Fase 6. Incluye operación y sincronización offline.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -63,3 +63,9 @@ paths:
     post: {summary: Crear registro organizacional, responses: {'201': {description: Registro creado}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}
   /organization/status:
     post: {summary: Cambiar estado lógico, responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}}
+  /offline/sync:
+    post: {summary: Sincronizar operaciones de un dispositivo autorizado, responses: {'200': {description: Lote procesado}, '401': {description: Dispositivo no autorizado}, '422': {description: Lote inválido}}}
+  /offline/conflicts:
+    get: {summary: Consultar conflictos y operaciones vencidas, responses: {'200': {description: Registros pendientes}, '403': {description: Sin permiso}}}
+  /offline/review:
+    post: {summary: Aceptar o rechazar una operación offline, responses: {'200': {description: Revisión registrada}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}

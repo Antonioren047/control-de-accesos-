@@ -41,6 +41,7 @@ return [
         ['rounds.execute', 'rounds', 'execute', 'Ejecutar recorridos'],
         ['supervisions.manage', 'supervisions', 'manage', 'Realizar supervisiones'],
         ['offline_conflicts.manage', 'offline_conflicts', 'manage', 'Resolver conflictos sin conexión'],
+        ['offline_operations.capture', 'offline_operations', 'capture', 'Registrar operaciones sin conexión'],
         ['reports.view', 'reports', 'view', 'Consultar reportes operativos'],
         ['reports.own_history', 'reports', 'view_own', 'Consultar historial propio'],
         ['system.configure', 'system', 'configure', 'Configurar el sistema'],
@@ -84,7 +85,7 @@ return [
         'guard' => [
             'shifts.view', 'shifts.novelty', 'operations.view', 'attendance.own',
             'visits.check_in', 'providers.check_in', 'events.create', 'rounds.execute',
-            'own_activity.view',
+            'own_activity.view', 'offline_operations.capture',
         ],
         'resident' => ['units.view_own', 'visits.manage', 'providers.create', 'reports.own_history'],
     ],

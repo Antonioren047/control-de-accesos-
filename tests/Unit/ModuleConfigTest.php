@@ -33,4 +33,11 @@ final class ModuleConfigTest extends TestCase
         self::assertContains('admin', $turnos['roles']);
         self::assertContains('supervisor', $turnos['roles']);
     }
+
+    public function testVigilantePuedeCapturarOfflinePeroNoResolverConflictos(): void
+    {
+        $guard = (require dirname(__DIR__, 2) . '/config/modules.php')['roles']['guard'];
+        self::assertContains('offline_operations.capture', $guard);
+        self::assertNotContains('offline_conflicts.manage', $guard);
+    }
 }

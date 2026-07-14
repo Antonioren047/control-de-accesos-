@@ -66,6 +66,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase3.css">
     <link rel="stylesheet" href="assets/css/phase4.css">
     <link rel="stylesheet" href="assets/css/phase5.css">
+    <link rel="stylesheet" href="assets/css/phase6.css">
 </head>
 <body>
 <div class="app-shell">
@@ -87,7 +88,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 5 · Sesión operativa</div>
+        <div class="sidebar-foot">Fase 6 · Operación sin conexión</div>
     </aside>
     <main>
         <header class="topbar">
@@ -136,6 +137,7 @@ $formatDate = static function (?string $value): string {
             $isPhaseThreeModule = in_array($moduleId, ['clientes', 'sitios', 'mis_unidades', 'turnos'], true)
                 || ($moduleId === 'usuarios' && array_intersect(['residents.manage','guards.manage','guards.view'], $profile['permissions']));
             $isPhaseFiveModule = in_array($moduleId, ['operacion','asistencias','mi_actividad'], true);
+            $isPhaseSixModule = $moduleId === 'sincronizacion';
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -174,6 +176,15 @@ $formatDate = static function (?string $value): string {
                         <div class="organization-toolbar"><div><p class="eyebrow">Fase 5 activa</p><h3><?= $moduleId==='operacion'?'Sesiones operativas':($moduleId==='asistencias'?'Control de asistencias':'Mi historial operativo') ?></h3></div>
                         <?php if($moduleId==='operacion' && $profile['role']['code']==='guard'): ?><a class="submit" href="guard-access.php">Abrir acceso operativo</a><?php endif; ?></div>
                         <div class="organization-content" data-phase5-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
+                    </section>
+                <?php elseif ($isPhaseSixModule): ?>
+                    <section class="phase6-workspace" data-phase6-module="sincronizacion">
+                        <div class="organization-toolbar">
+                            <div><p class="eyebrow">Fase 6 activa</p><h3>Registros que requieren revisión</h3></div>
+                            <button class="ghost-button" type="button" data-phase6-refresh>Actualizar</button>
+                        </div>
+                        <p class="muted">Los conflictos y registros vencidos se conservan; un supervisor debe aceptarlos o rechazarlos con comentario.</p>
+                        <div class="organization-content" data-phase6-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
                     </section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
@@ -265,7 +276,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 5 · Sesiones y asistencias</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 6 · Operación sin conexión</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -289,5 +300,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
+<script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 </body>
 </html>

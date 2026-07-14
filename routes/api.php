@@ -8,6 +8,7 @@ use Vigilancia\Controllers\OrganizationController;
 use Vigilancia\Controllers\UserSecurityController;
 use Vigilancia\Controllers\WorkforceController;
 use Vigilancia\Controllers\OperationalController;
+use Vigilancia\Controllers\OfflineController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -20,8 +21,11 @@ use Vigilancia\Repositories\PermissionRepository;
 use Vigilancia\Repositories\SecurityLogRepository;
 use Vigilancia\Repositories\WorkforceRepository;
 use Vigilancia\Repositories\OperationalRepository;
+use Vigilancia\Repositories\OfflineRepository;
 use Vigilancia\Services\OperationalService;
 use Vigilancia\Services\OperationalPhotoService;
+use Vigilancia\Services\OfflineService;
+use Vigilancia\Services\OfflineEvidenceService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -42,12 +46,13 @@ $workforceController = new WorkforceController(
 );
 $operationalController = new OperationalController(
     $auth,
-    new OperationalService($pdo, new OperationalRepository($pdo), new OperationalPhotoService($root), new SecurityLogRepository($pdo))
+    new OperationalService($pdo, new OperationalRepository($pdo), new OperationalPhotoService($root), new SecurityLogRepository($pdo), new OfflineRepository($pdo))
 );
+$offlineController = new OfflineController($auth,new OfflineService($pdo,new OfflineRepository($pdo),new OfflineEvidenceService($root),new SecurityLogRepository($pdo),new OperationalRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '5.0.0',
+    'version' => '6.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -79,3 +84,6 @@ $router->post('/operations/close', [$operationalController, 'close']);
 $router->get('/operations/sessions', [$operationalController, 'sessions']);
 $router->get('/operations/attendance', [$operationalController, 'attendance']);
 $router->post('/operations/manual-close', [$operationalController, 'manualClose']);
+$router->post('/offline/sync', [$offlineController, 'sync']);
+$router->get('/offline/conflicts', [$offlineController, 'conflicts']);
+$router->post('/offline/review', [$offlineController, 'review']);

@@ -10,6 +10,7 @@ use Vigilancia\Auth\BackoffPolicy;
 use Vigilancia\Exceptions\HttpException;
 use Vigilancia\Operations\AttendanceClassifier;
 use Vigilancia\Repositories\OperationalRepository;
+use Vigilancia\Repositories\OfflineRepository;
 use Vigilancia\Repositories\PermissionRepository;
 use Vigilancia\Repositories\SecurityLogRepository;
 use Vigilancia\Support\ClientInfo;
@@ -17,7 +18,7 @@ use Vigilancia\Support\ClientInfo;
 final class OperationalService
 {
     private AuthorizationService $authorization;
-    public function __construct(private PDO $pdo,private OperationalRepository $repository,private OperationalPhotoService $photos,private SecurityLogRepository $logs){$this->authorization=new AuthorizationService(new PermissionRepository($pdo));}
+    public function __construct(private PDO $pdo,private OperationalRepository $repository,private OperationalPhotoService $photos,private SecurityLogRepository $logs,private OfflineRepository $offline){$this->authorization=new AuthorizationService(new PermissionRepository($pdo));}
     public function catalog():array{return['points'=>$this->repository->catalog()];}
     public function start(array $in):array
     {
@@ -35,9 +36,9 @@ final class OperationalService
         $entry=AttendanceClassifier::entry($assignment['now_local'],$assignment['start_local'],$assignment['end_local'],(int)$assignment['tolerance_minutes']);
         $photo=$this->photos->save((string)$in['photo_data']);$data=['guard_user_id'=>(int)$credential['guard_user_id'],'assignment_id'=>(int)$assignment['id'],'shift_id'=>(int)$assignment['shift_id'],'client_id'=>(int)$in['client_id'],'location_id'=>(int)$in['location_id'],'access_point_id'=>(int)$in['access_point_id'],'now_utc'=>$nowUtc->format('Y-m-d H:i:s'),'scheduled_start'=>$assignment['start_local']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),'scheduled_end'=>$assignment['end_local']->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s'),'photo'=>$photo,'entry_classification'=>$entry['classification'],'minutes_late'=>$entry['minutes_late'],'device_type'=>substr(trim((string)($in['device_type']??'unknown')),0,30),'browser'=>substr(trim((string)($in['browser']??'unknown')),0,80),'os'=>substr(trim((string)($in['operating_system']??'unknown')),0,80),'ip'=>ClientInfo::ip(),'device_identifier'=>hash('sha256',(string)$in['device_identifier']),'connection'=>'online'];
         $this->pdo->beginTransaction();try{if($this->repository->activeForGuard($data['guard_user_id'],true)||$this->repository->activeForPoint($data['access_point_id'],true))throw new HttpException('No es posible abrir la sesiÃ³n porque ya existe otra sesiÃ³n activa.',409);$id=$this->repository->create($data);$this->pdo->commit();}catch(Throwable$e){if($this->pdo->inTransaction())$this->pdo->rollBack();throw$e;}
-        session_regenerate_id(true);$_SESSION['operational_session_id']=$id;$_SESSION['operational_guard_id']=$data['guard_user_id'];$this->logs->record($data['guard_user_id'],'operations.session_started',ClientInfo::ip(),ClientInfo::userAgent(),['session_id'=>$id,'classification'=>$entry['classification']]);return$this->current();
+        session_regenerate_id(true);$_SESSION['operational_session_id']=$id;$_SESSION['operational_guard_id']=$data['guard_user_id'];$offlineToken=bin2hex(random_bytes(32));$this->offline->authorize($data['guard_user_id'],$data['device_identifier'],hash('sha256',$offlineToken));$_SESSION['offline_sync_token']=$offlineToken;$this->logs->record($data['guard_user_id'],'operations.session_started',ClientInfo::ip(),ClientInfo::userAgent(),['session_id'=>$id,'classification'=>$entry['classification']]);return$this->current();
     }
-    public function current():array{$id=(int)($_SESSION['operational_session_id']??0);if(!$id)throw new HttpException('No existe una sesiÃ³n operativa activa.',401);$row=$this->repository->session($id);if(!$row||$row['status']!=='active'||(int)$row['guard_user_id']!==(int)($_SESSION['operational_guard_id']??0)){$this->clear();throw new HttpException('La sesiÃ³n operativa ya no estÃ¡ activa.',401);}return$row;}
+    public function current():array{$id=(int)($_SESSION['operational_session_id']??0);if(!$id)throw new HttpException('No existe una sesiÃ³n operativa activa.',401);$row=$this->repository->session($id);if(!$row||$row['status']!=='active'||(int)$row['guard_user_id']!==(int)($_SESSION['operational_guard_id']??0)){$this->clear();throw new HttpException('La sesiÃ³n operativa ya no estÃ¡ activa.',401);}$row['offline']=['token'=>(string)($_SESSION['offline_sync_token']??''),'expires_in_hours'=>24];return$row;}
     public function close(array $in):array
     {
         $row=$this->current();$token=trim((string)($in['qr_token']??''));$credential=$token===''?null:$this->findCredential($token);if(!$credential||(int)$credential['guard_user_id']!==(int)$row['guard_user_id'])throw new HttpException('Escanea el QR o ingresa la referencia vigente del vigilante para cerrar.',401);
