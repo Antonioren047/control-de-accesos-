@@ -25,4 +25,12 @@ final class ModuleConfigTest extends TestCase
         self::assertNotContains('visits.manage', $roles['admin']);
         self::assertNotSame($roles['admin'], $roles['resident']);
     }
+
+    public function testVigilanteNoRecibeModuloAdministrativoDeTurnos(): void
+    {
+        $turnos = (require dirname(__DIR__, 2) . '/config/modules.php')['modules']['turnos'];
+        self::assertNotContains('guard', $turnos['roles']);
+        self::assertContains('admin', $turnos['roles']);
+        self::assertContains('supervisor', $turnos['roles']);
+    }
 }
