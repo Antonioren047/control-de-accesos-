@@ -136,6 +136,7 @@ final class AuthService
 
     public function changePassword(array $user, string $currentPassword, string $newPassword): void
     {
+        if ($user['role_code'] === 'resident') throw new HttpException('El residente no puede cambiar contraseÃ±as desde el portal.', 403);
         $this->authorization->require($user, 'auth.password.change');
         if (!password_verify($currentPassword, $user['password_hash'])) {
             throw new HttpException('La contraseña actual no es correcta.', 422, ['current_password' => ['No coincide.']]);
@@ -184,6 +185,7 @@ final class AuthService
 
     public function sessions(array $user): array
     {
+        if ($user['role_code'] === 'resident') throw new HttpException('El residente no puede consultar sesiones activas.', 403);
         $this->authorization->require($user, 'auth.sessions.view');
         $currentId = (int) ($user['auth_session_id'] ?? 0);
 
@@ -200,6 +202,7 @@ final class AuthService
 
     public function revokeSession(array $user, int $sessionId): void
     {
+        if ($user['role_code'] === 'resident') throw new HttpException('El residente no puede revocar sesiones.', 403);
         $this->authorization->require($user, 'auth.sessions.revoke');
         if ($sessionId <= 0) throw new HttpException('La sesión indicada no es válida.', 422);
         if ($sessionId === (int) ($user['auth_session_id'] ?? 0)) {

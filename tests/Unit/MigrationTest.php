@@ -14,5 +14,6 @@ final class MigrationTest extends TestCase
         self::assertIsCallable(require $root . '003_organization.php');
         self::assertIsCallable(require $root . '004_workforce.php');
         self::assertIsCallable(require $root . '005_operations.php');
+        self::assertIsCallable(require $root . '006_resident_security_restriction.php');
     }
 }

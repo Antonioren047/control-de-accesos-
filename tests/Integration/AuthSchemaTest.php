@@ -39,7 +39,7 @@ final class AuthSchemaTest extends TestCase
         self::assertCount(2, $statement->fetchAll(PDO::FETCH_COLUMN));
     }
 
-    public function testRolesWebPuedenConsultarYRevocarSusPropiasSesiones(): void
+    public function testSoloRolesAdministrativosPuedenConsultarYRevocarSusSesiones(): void
     {
         $pdo = $this->connection();
         $statement = $pdo->query(
@@ -56,10 +56,16 @@ final class AuthSchemaTest extends TestCase
 
         self::assertSame([
             'admin' => 2,
-            'resident' => 2,
             'superadmin' => 2,
             'supervisor' => 2,
         ], $result);
+    }
+
+    public function testResidenteNoTienePermisosDeSeguridadDeCuenta():void
+    {
+        $pdo=$this->connection();
+        $count=$pdo->query("SELECT COUNT(*) FROM role_permissions rp JOIN roles r ON r.id=rp.role_id JOIN permissions p ON p.id=rp.permission_id WHERE r.code='resident' AND p.code IN ('auth.password.change','auth.sessions.view','auth.sessions.revoke')")->fetchColumn();
+        self::assertSame(0,(int)$count);
     }
 
     public function testPermisosOperativosBaseEstanSeparadosPorRol(): void

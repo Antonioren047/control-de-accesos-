@@ -55,8 +55,7 @@ return static function (PDO $pdo, bool $demo = false): void {
         "INSERT IGNORE INTO role_permissions(role_id,permission_id,created_at)
          SELECT r.id,p.id,UTC_TIMESTAMP()
          FROM roles r JOIN permissions p ON p.code IN (
-             'auth.profile.view','auth.password.change','auth.sessions.view','auth.sessions.revoke',
-             'system.view','visits.manage'
+             'auth.profile.view','system.view','visits.manage'
          ) WHERE r.code='resident'"
     );
 

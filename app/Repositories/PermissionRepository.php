@@ -27,6 +27,11 @@ final class PermissionRepository
             if ((bool) $override['is_allowed']) $permissions[$override['code']] = true;
             else unset($permissions[$override['code']]);
         }
+        $role = $this->pdo->prepare('SELECT code FROM roles WHERE id=? LIMIT 1');
+        $role->execute([$roleId]);
+        if ($role->fetchColumn() === 'resident') {
+            foreach (['auth.password.change','auth.sessions.view','auth.sessions.revoke'] as $forbidden) unset($permissions[$forbidden]);
+        }
         $result = array_keys($permissions);
         sort($result);
         return $result;
