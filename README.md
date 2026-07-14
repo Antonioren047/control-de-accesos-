@@ -1,8 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación, organización multiempresa y gestión de personal de las **Fases 1 a 4** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 5** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
-La Fase 4 incorpora expedientes de vigilantes, credenciales QR/PIN, turnos multiubicación, rotaciones, sustituciones y asignaciones con bloqueo de traslapes. Consulte [la guía técnica](docs/manual-tecnico/fase-4-personal-turnos.md) y [el manual de usuario](docs/manual-usuario/fase-4.md).
+La Fase 5 incorpora acceso operativo por QR + PIN + fotografía, sesión única por vigilante y punto, clasificación de asistencia y cierre supervisado auditado. Consulte [la guía técnica](docs/manual-tecnico/fase-5-operacion-asistencias.md) y [el manual de usuario](docs/manual-usuario/fase-5.md).
 
 ## Incluido
 
@@ -20,6 +20,8 @@ La Fase 4 incorpora expedientes de vigilantes, credenciales QR/PIN, turnos multi
 - Clientes, lugares, puntos de acceso, unidades y residentes con baja lógica.
 - Alcances aislados por cliente, lugar, punto y unidad, aplicados en backend.
 - Paneles SPA de Fase 3 y datos demo idempotentes.
+- Acceso operativo responsive, captura de cámara, datos del dispositivo y cierre mediante QR.
+- Asistencias puntuales, retardos, fuera de horario, salidas anticipadas, tiempo extra y turnos incompletos.
 
 ## Requisitos
 
@@ -59,4 +61,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-Las Fases 1 a 3 están implementadas. Vigilantes, turnos, sesión operativa, visitas, eventos, supervisiones, reportes y Cron corresponden a las Fases 4 a 12.
+Las Fases 1 a 5 están implementadas. Operación sin conexión, visitas, eventos, supervisiones, reportes y Cron corresponden a las Fases 6 a 12.

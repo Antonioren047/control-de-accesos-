@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+$root=require dirname(__DIR__).'/bootstrap/app.php';
+use Vigilancia\Middleware\CsrfMiddleware;
+use Vigilancia\Support\Session;
+if(!is_file($root.'/storage/installed.lock')){header('Location: install/');exit;}
+Session::start();$csrf=CsrfMiddleware::token();
+?>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="<?=htmlspecialchars($csrf)?>"><title>Acceso operativo · Sistema de Vigilancia</title><link rel="stylesheet" href="assets/css/styles.css"><link rel="stylesheet" href="assets/css/phase5.css"></head><body class="operational-body">
+<main class="operational-shell"><header class="operational-brand"><img src="assets/images/logo.svg" alt=""><div><p class="eyebrow">ACCESO OPERATIVO · FASE 5</p><h1>Inicio de turno</h1><p>Valida tu ubicación, credencial, PIN y fotografía de entrada.</p></div></header>
+<form id="operationalStart" class="operational-card"><div class="step-grid"><label>Cliente<select name="client_id" required><option value="">Selecciona</option></select></label><label>Lugar<select name="location_id" required disabled><option value="">Selecciona</option></select></label><label>Punto de acceso<select name="access_point_id" required disabled><option value="">Selecciona</option></select></label><label>PIN de 6 dígitos<input name="pin" inputmode="numeric" pattern="\d{6}" maxlength="6" autocomplete="off" required placeholder="••••••"></label></div>
+<section class="capture-grid"><div><h2>Credencial QR</h2><p class="muted">Muestra la credencial a la cámara o pega el código para equipos sin lector.</p><label>Código de credencial<input name="qr_token" autocomplete="off" required></label><button class="ghost-button" id="scanQr" type="button">Escanear con cámara</button></div><div><h2>Fotografía de entrada</h2><video id="camera" autoplay playsinline muted></video><canvas id="snapshot" hidden></canvas><img id="preview" alt="Vista previa" hidden><button class="ghost-button" id="takePhoto" type="button">Tomar fotografía</button><input name="photo_data" type="hidden" required></div></section>
+<div id="operationalMessage" class="form-message" role="alert"></div><button class="submit wide" type="submit">Validar e iniciar sesión</button></form><a class="back-link" href="login.php">← Volver al acceso administrativo</a></main><script src="assets/js/guard-access.js"></script></body></html>

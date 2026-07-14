@@ -57,6 +57,7 @@ $csrf = CsrfMiddleware::token();
             <div class="login-links"><span>¿Olvidaste tu contraseña?</span><small>Próximamente</small></div>
             <div class="form-message" id="loginMessage" role="alert" aria-live="polite"></div>
             <button class="submit login-submit" type="submit">Iniciar sesión <span>→</span></button>
+            <a class="ghost-button" style="text-align:center;margin-top:10px" href="guard-access.php">Acceso operativo del vigilante</a>
             <p class="session-note">La sesión puede permanecer activa hasta 24 horas.</p>
             <div class="protected-note"><span>✓</span> Acceso protegido con controles de seguridad institucional.</div>
         </form>

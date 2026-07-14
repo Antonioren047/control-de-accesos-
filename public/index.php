@@ -65,6 +65,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase2.css">
     <link rel="stylesheet" href="assets/css/phase3.css">
     <link rel="stylesheet" href="assets/css/phase4.css">
+    <link rel="stylesheet" href="assets/css/phase5.css">
 </head>
 <body>
 <div class="app-shell">
@@ -86,7 +87,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 4 · Operación planificada</div>
+        <div class="sidebar-foot">Fase 5 · Sesión operativa</div>
     </aside>
     <main>
         <header class="topbar">
@@ -138,6 +139,7 @@ $formatDate = static function (?string $value): string {
             $grantedModulePermissions = array_values(array_intersect($module['permissions'], $profile['permissions']));
             $isPhaseThreeModule = in_array($moduleId, ['clientes', 'sitios', 'mis_unidades', 'turnos'], true)
                 || ($moduleId === 'usuarios' && array_intersect(['residents.manage','guards.manage','guards.view'], $profile['permissions']));
+            $isPhaseFiveModule = in_array($moduleId, ['operacion','asistencias','mi_actividad'], true);
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -170,6 +172,12 @@ $formatDate = static function (?string $value): string {
                             </div>
                         </div>
                         <div class="organization-content" data-organization-content data-status-entities="<?= $moduleId === 'clientes' && $profile['role']['code'] === 'superadmin' ? 'client' : ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true) ? 'location,access_point,unit' : '') ?>"><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
+                    </section>
+                <?php elseif ($isPhaseFiveModule): ?>
+                    <section class="phase5-workspace" data-phase5-module="<?= htmlspecialchars($moduleId) ?>" data-can-close="<?= in_array('operational_sessions.close',$profile['permissions'],true)?'1':'0' ?>">
+                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 5 activa</p><h3><?= $moduleId==='operacion'?'Sesiones operativas':($moduleId==='asistencias'?'Control de asistencias':'Mi historial operativo') ?></h3></div>
+                        <?php if($moduleId==='operacion' && $profile['role']['code']==='guard'): ?><a class="submit" href="guard-access.php">Abrir acceso operativo</a><?php endif; ?></div>
+                        <div class="organization-content" data-phase5-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
                     </section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
@@ -261,7 +269,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 4 · Personal, turnos y asignaciones</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 5 · Sesiones y asistencias</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -284,5 +292,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/app.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
+<script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
 </body>
 </html>

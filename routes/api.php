@@ -7,6 +7,7 @@ use Vigilancia\Controllers\PermissionController;
 use Vigilancia\Controllers\OrganizationController;
 use Vigilancia\Controllers\UserSecurityController;
 use Vigilancia\Controllers\WorkforceController;
+use Vigilancia\Controllers\OperationalController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -18,6 +19,9 @@ use Vigilancia\Repositories\OrganizationRepository;
 use Vigilancia\Repositories\PermissionRepository;
 use Vigilancia\Repositories\SecurityLogRepository;
 use Vigilancia\Repositories\WorkforceRepository;
+use Vigilancia\Repositories\OperationalRepository;
+use Vigilancia\Services\OperationalService;
+use Vigilancia\Services\OperationalPhotoService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -36,10 +40,14 @@ $workforceController = new WorkforceController(
     $auth,
     new WorkforceService($pdo, new WorkforceRepository($pdo), new CredentialAssetService($root), new SecurityLogRepository($pdo))
 );
+$operationalController = new OperationalController(
+    $auth,
+    new OperationalService($pdo, new OperationalRepository($pdo), new OperationalPhotoService($root), new SecurityLogRepository($pdo))
+);
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '4.0.0',
+    'version' => '5.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -64,3 +72,10 @@ $router->get('/workforce/shifts', [$workforceController, 'shifts']);
 $router->get('/workforce/assignments', [$workforceController, 'assignments']);
 $router->post('/workforce/create', [$workforceController, 'create']);
 $router->post('/workforce/action', [$workforceController, 'action']);
+$router->get('/operations/catalog', [$operationalController, 'catalog']);
+$router->post('/operations/start', [$operationalController, 'start']);
+$router->get('/operations/current', [$operationalController, 'current']);
+$router->post('/operations/close', [$operationalController, 'close']);
+$router->get('/operations/sessions', [$operationalController, 'sessions']);
+$router->get('/operations/attendance', [$operationalController, 'attendance']);
+$router->post('/operations/manual-close', [$operationalController, 'manualClose']);

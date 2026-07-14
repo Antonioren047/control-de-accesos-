@@ -1,0 +1,8 @@
+<?php
+declare(strict_types=1);
+$root=require dirname(__DIR__).'/bootstrap/app.php';
+use Vigilancia\Middleware\CsrfMiddleware;
+use Vigilancia\Support\Session;
+Session::start();if(empty($_SESSION['operational_session_id'])){header('Location: guard-access.php');exit;}$csrf=CsrfMiddleware::token();
+?>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="csrf-token" content="<?=htmlspecialchars($csrf)?>"><title>Turno activo · Sistema de Vigilancia</title><link rel="stylesheet" href="assets/css/styles.css"><link rel="stylesheet" href="assets/css/phase5.css"></head><body class="operational-body"><main class="operational-shell"><header class="operational-brand"><img src="assets/images/logo.svg" alt=""><div><p class="eyebrow">SESIÓN OPERATIVA ACTIVA</p><h1 id="guardName">Cargando turno…</h1><p id="sessionScope"></p></div><span class="live-pill">● En línea</span></header><section class="operational-card"><div id="sessionDetails" class="session-metrics"></div><div class="scope-notice">Durante esta sesión solo puedes operar en el punto de acceso indicado.</div><section class="close-session"><h2>Cerrar turno</h2><p>Escanea nuevamente tu credencial QR para registrar la salida.</p><label>Código de credencial<input id="closeToken" autocomplete="off"></label><video id="closeCamera" autoplay playsinline muted hidden></video><button class="ghost-button" id="scanCloseQr" type="button">Escanear QR con cámara</button><button class="submit" id="closeSession" type="button">Registrar salida y cerrar</button><div id="closeMessage" class="form-message" role="alert"></div></section></section></main><script src="assets/js/guard-operation.js"></script></body></html>
