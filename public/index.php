@@ -111,10 +111,6 @@ $formatDate = static function (?string $value): string {
         <?php if ($profile['force_password_change']): ?>
             <div class="security-banner" role="alert">Debes cambiar la contraseña temporal antes de continuar.</div>
         <?php endif; ?>
-        <?php if ($profile['role']['code'] === 'guard'): ?>
-            <div class="security-banner validation-banner" role="status">Acceso web del Vigilante habilitado únicamente para validación local. El acceso operativo definitivo utilizará QR + PIN.</div>
-        <?php endif; ?>
-
         <section class="app-view" data-view="inicio">
             <section class="hero phase-two">
                 <div>

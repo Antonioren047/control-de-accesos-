@@ -153,8 +153,9 @@ return static function (PDO $pdo, bool $demo = false): void {
     // Desactivado por defecto. En desarrollo permite validar el rol Vigilante
     // con correo y contraseña mientras se implementa el acceso definitivo QR + PIN.
     $pdo->exec(
-        "INSERT IGNORE INTO system_settings(
+        "INSERT INTO system_settings(
             setting_key,setting_value,value_type,is_public,created_at,updated_at
-         ) VALUES('security.guard_web_login_enabled','0','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())"
+         ) VALUES('security.guard_web_login_enabled','0','boolean',0,UTC_TIMESTAMP(),UTC_TIMESTAMP())
+         ON DUPLICATE KEY UPDATE setting_value='0',updated_at=UTC_TIMESTAMP()"
     );
 };

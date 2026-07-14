@@ -98,9 +98,22 @@ final class AuthSchemaTest extends TestCase
              WHERE p.code='permissions.manage' ORDER BY r.code"
         )->fetchAll(PDO::FETCH_COLUMN);
         self::assertSame(['superadmin'], $roles);
-        self::assertContains((string) $pdo->query(
+        self::assertSame('0', (string) $pdo->query(
             "SELECT setting_value FROM system_settings WHERE setting_key='security.guard_web_login_enabled'"
-        )->fetchColumn(), ['0', '1']);
+        )->fetchColumn());
+    }
+
+    public function testVigilanteNoPuedeUsarLoginDeCorreoAunqueSeActiveElInterruptor():void
+    {
+        $pdo=$this->connection();
+        $email=(string)$pdo->query("SELECT u.email FROM users u JOIN roles r ON r.id=u.role_id WHERE r.code='guard' AND u.email='vigilante@demo.local' LIMIT 1")->fetchColumn();
+        if($email==='')self::markTestSkipped('Vigilante demo no disponible.');
+        $pdo->beginTransaction();
+        try{
+            $pdo->exec("UPDATE system_settings SET setting_value='1' WHERE setting_key='security.guard_web_login_enabled'");
+            $this->expectException(\Vigilancia\Exceptions\HttpException::class);
+            (new \Vigilancia\Services\AuthService($pdo))->login($email,'Ccserv-10.02!');
+        }finally{if($pdo->inTransaction())$pdo->rollBack();}
     }
 
     public function testPermisosDeModuloDistinguenAdministradorYResidente(): void

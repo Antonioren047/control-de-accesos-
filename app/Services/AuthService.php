@@ -42,8 +42,7 @@ final class AuthService
         }
 
         $user = $this->users->findByEmail($email);
-        $guardWebLoginAllowed = !$user || $user['role_code'] !== 'guard'
-            || $this->settingInt('security.guard_web_login_enabled', 0) === 1;
+        $guardWebLoginAllowed = !$user || $user['role_code'] !== 'guard';
         $valid = $user
             && (bool) $user['is_active']
             && $guardWebLoginAllowed
