@@ -7,6 +7,7 @@ return static function(PDO $pdo,bool $demo=false):void{
     if($companyId<=0)return;
     $client=$pdo->prepare("INSERT INTO clients(surveillance_company_id,code,name,legal_name,timezone,storage_limit_gb,is_active,created_at,updated_at) VALUES(?,'DEMO-01','Residencial Vértice','Residencial Vértice A.C.','America/Mexico_City',10,1,UTC_TIMESTAMP(),UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE name=VALUES(name),is_active=1,updated_at=UTC_TIMESTAMP()");$client->execute([$companyId]);
     $clientId=(int)$pdo->query("SELECT id FROM clients WHERE surveillance_company_id=$companyId AND code='DEMO-01'")->fetchColumn();
+    $pdo->prepare('INSERT IGNORE INTO access_policies(client_id,created_at,updated_at) VALUES(?,UTC_TIMESTAMP(),UTC_TIMESTAMP())')->execute([$clientId]);
     $location=$pdo->prepare("INSERT INTO locations(client_id,code,name,address_line,city,state,postal_code,timezone,is_active,created_at,updated_at) VALUES(?,?,?,?,?,'Nuevo León','64000','America/Mexico_City',1,UTC_TIMESTAMP(),UTC_TIMESTAMP()) ON DUPLICATE KEY UPDATE name=VALUES(name),address_line=VALUES(address_line),is_active=1,updated_at=UTC_TIMESTAMP()");
     $location->execute([$clientId,'NORTE','Residencial Norte','Av. Seguridad 100','Monterrey']);
     $location->execute([$clientId,'SUR','Parque Industrial Sur','Carretera Industrial 250','Monterrey']);

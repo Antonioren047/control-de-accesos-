@@ -9,6 +9,7 @@ use Vigilancia\Controllers\UserSecurityController;
 use Vigilancia\Controllers\WorkforceController;
 use Vigilancia\Controllers\OperationalController;
 use Vigilancia\Controllers\OfflineController;
+use Vigilancia\Controllers\AccessController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -26,6 +27,9 @@ use Vigilancia\Services\OperationalService;
 use Vigilancia\Services\OperationalPhotoService;
 use Vigilancia\Services\OfflineService;
 use Vigilancia\Services\OfflineEvidenceService;
+use Vigilancia\Repositories\AccessRepository;
+use Vigilancia\Services\AccessService;
+use Vigilancia\Services\AccessAssetService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -49,10 +53,11 @@ $operationalController = new OperationalController(
     new OperationalService($pdo, new OperationalRepository($pdo), new OperationalPhotoService($root), new SecurityLogRepository($pdo), new OfflineRepository($pdo))
 );
 $offlineController = new OfflineController($auth,new OfflineService($pdo,new OfflineRepository($pdo),new OfflineEvidenceService($root),new SecurityLogRepository($pdo),new OperationalRepository($pdo)));
+$accessController = new AccessController($auth,new AccessService($pdo,new AccessRepository($pdo),new OperationalRepository($pdo),new AccessAssetService($root),new SecurityLogRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '6.0.0',
+    'version' => '7.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -87,3 +92,16 @@ $router->post('/operations/manual-close', [$operationalController, 'manualClose'
 $router->post('/offline/sync', [$offlineController, 'sync']);
 $router->get('/offline/conflicts', [$offlineController, 'conflicts']);
 $router->post('/offline/review', [$offlineController, 'review']);
+$router->get('/access/catalog', [$accessController, 'catalog']);
+$router->get('/visits', [$accessController, 'visits']);
+$router->post('/visits', [$accessController, 'createVisit']);
+$router->post('/visits/action', [$accessController, 'visitAction']);
+$router->get('/visits/validate', [$accessController, 'validateVisit']);
+$router->post('/visits/check-in', [$accessController, 'checkInVisit']);
+$router->post('/visits/check-out', [$accessController, 'checkOutVisit']);
+$router->get('/access/active', [$accessController, 'active']);
+$router->get('/providers', [$accessController, 'providers']);
+$router->post('/providers', [$accessController, 'createProvider']);
+$router->get('/providers/validate', [$accessController, 'validateProvider']);
+$router->post('/providers/check-in', [$accessController, 'checkInProvider']);
+$router->post('/providers/check-out', [$accessController, 'checkOutProvider']);

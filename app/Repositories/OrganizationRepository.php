@@ -79,7 +79,9 @@ final class OrganizationRepository
     {
         $s=$this->pdo->prepare("INSERT INTO clients(surveillance_company_id,code,name,legal_name,timezone,storage_limit_gb,is_active,created_by,updated_by,created_at,updated_at) VALUES(?,?,?,?,?,10,1,?,?,UTC_TIMESTAMP(),UTC_TIMESTAMP())");
         $s->execute([$companyId,$data['code'],$data['name'],$data['legal_name'] ?: null,$data['timezone'],$actorId,$actorId]);
-        return (int)$this->pdo->lastInsertId();
+        $id=(int)$this->pdo->lastInsertId();
+        $this->pdo->prepare('INSERT IGNORE INTO access_policies(client_id,created_at,updated_at) VALUES(?,UTC_TIMESTAMP(),UTC_TIMESTAMP())')->execute([$id]);
+        return $id;
     }
 
     public function createLocation(array $data, int $actorId): int

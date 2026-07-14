@@ -40,4 +40,15 @@ final class ModuleConfigTest extends TestCase
         self::assertContains('offline_operations.capture', $guard);
         self::assertNotContains('offline_conflicts.manage', $guard);
     }
+
+    public function testPermisosDeAccesosRespetanResponsabilidades(): void
+    {
+        $roles = (require dirname(__DIR__, 2) . '/config/modules.php')['roles'];
+        self::assertContains('visits.manage', $roles['resident']);
+        self::assertContains('providers.create', $roles['resident']);
+        self::assertContains('visits.check_in', $roles['guard']);
+        self::assertContains('providers.check_in', $roles['guard']);
+        self::assertNotContains('access_identifications.view', $roles['guard']);
+        self::assertContains('access_identifications.view', $roles['supervisor']);
+    }
 }

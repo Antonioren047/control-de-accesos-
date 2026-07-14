@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 6.0.0
-  description: Fase 6. Incluye operación y sincronización offline.
+  version: 7.0.0
+  description: Fase 7. Incluye visitas y proveedores con captura segura.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -69,3 +69,19 @@ paths:
     get: {summary: Consultar conflictos y operaciones vencidas, responses: {'200': {description: Registros pendientes}, '403': {description: Sin permiso}}}
   /offline/review:
     post: {summary: Aceptar o rechazar una operación offline, responses: {'200': {description: Revisión registrada}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}
+  /visits:
+    get: {summary: Listar visitas autorizadas, responses: {'200': {description: Visitas}}}
+    post: {summary: Crear visita y QR, responses: {'201': {description: Visita creada}, '409': {description: Duplicado o límite}}}
+  /visits/validate:
+    get: {summary: Validar QR de visita en línea, responses: {'200': {description: QR válido}, '409': {description: Acceso no permitido}}}
+  /visits/check-in:
+    post: {summary: Registrar entrada de visitante, responses: {'201': {description: Entrada registrada}}}
+  /visits/check-out:
+    post: {summary: Registrar salida de visitante, responses: {'200': {description: Salida registrada}}}
+  /providers:
+    get: {summary: Listar proveedores, responses: {'200': {description: Proveedores}}}
+    post: {summary: Crear acceso previo con QR, responses: {'201': {description: Acceso creado}}}
+  /providers/check-in:
+    post: {summary: Registrar proveedor con o sin QR, responses: {'201': {description: Entrada registrada}}}
+  /providers/check-out:
+    post: {summary: Registrar salida de proveedor, responses: {'200': {description: Salida registrada}}}

@@ -33,6 +33,7 @@ return [
         ['providers.manage', 'providers', 'manage', 'Gestionar accesos de proveedores'],
         ['providers.create', 'providers', 'create_own', 'Crear accesos propios de proveedores'],
         ['providers.check_in', 'providers', 'check_in', 'Registrar entrada y salida de proveedores'],
+        ['access_identifications.view', 'access_identifications', 'view', 'Consultar identificaciones capturadas'],
         ['events.manage', 'events', 'manage', 'Administrar eventos'],
         ['events.review', 'events', 'review', 'Revisar y comentar eventos'],
         ['events.create', 'events', 'create', 'Registrar eventos'],
@@ -74,12 +75,12 @@ return [
             'clients.manage', 'locations.manage', 'access_points.manage', 'units.manage',
             'users.manage', 'guards.manage', 'guards.credential', 'guards.pin_reset', 'residents.manage', 'shifts.manage',
             'assignments.manage', 'operations.view', 'attendance.view', 'visits.view',
-            'providers.manage', 'events.manage', 'rounds.view', 'reports.view', 'system.configure',
+            'providers.manage', 'access_identifications.view', 'events.manage', 'rounds.view', 'reports.view', 'system.configure',
         ],
         'supervisor' => [
             'locations.view', 'access_points.view', 'units.view', 'guards.view', 'shifts.view', 'assignments.view', 'assignments.request_change', 'operations.view',
             'operational_sessions.close', 'attendance.view', 'visits.view', 'providers.manage',
-            'events.review', 'rounds.review', 'supervisions.manage', 'offline_conflicts.manage',
+            'access_identifications.view', 'events.review', 'rounds.review', 'supervisions.manage', 'offline_conflicts.manage',
             'reports.view',
         ],
         'guard' => [

@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 6.0.0
-  description: Contrato de autenticación, organización, operación y sincronización offline hasta la Fase 6.
+  version: 7.0.0
+  description: Contrato de autenticación, operación, sincronización, visitas y proveedores hasta la Fase 7.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -145,6 +145,26 @@ paths:
       summary: Aceptar o rechazar una operación offline con comentario
       parameters: [{$ref: '#/components/parameters/CsrfToken'}]
       responses: {'200': {description: Revisión registrada}, '403': {description: Sin permiso o fuera de alcance}, '422': {description: Decisión o comentario inválido}}
+  /access/catalog:
+    get: {summary: Consultar unidades autorizadas para generar accesos, responses: {'200': {description: Catálogo autorizado}, '401': {description: No autenticado}}}
+  /visits:
+    get: {summary: Listar visitas dentro del alcance, responses: {'200': {description: Visitas autorizadas}, '403': {description: Sin permiso}}}
+    post: {summary: Generar visita y QR como residente, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Visita creada}, '409': {description: Duplicado o límite activo}, '422': {description: Datos inválidos}}}
+  /visits/action:
+    post: {summary: Editar, cancelar o registrar intento de compartir, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Acción registrada}, '409': {description: Visita ya utilizada}}}
+  /visits/validate:
+    get: {summary: Validar QR en una sesión operativa activa, responses: {'200': {description: QR válido para entrada o salida}, '409': {description: Fuera de horario o estado inválido}}}
+  /visits/check-in:
+    post: {summary: Registrar entrada, fotografías y privacidad, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Entrada registrada}, '422': {description: Captura incompleta}}}
+  /visits/check-out:
+    post: {summary: Registrar salida con el mismo QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Salida registrada}}}
+  /providers:
+    get: {summary: Listar proveedores dentro del alcance, responses: {'200': {description: Accesos de proveedor}}}
+    post: {summary: Crear acceso previo de proveedor con QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Acceso creado}}}
+  /providers/check-in:
+    post: {summary: Registrar proveedor con o sin QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Entrada registrada}}}
+  /providers/check-out:
+    post: {summary: Registrar salida de proveedor, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Salida registrada}}}
 components:
   parameters:
     CsrfToken:
