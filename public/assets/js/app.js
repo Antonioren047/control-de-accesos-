@@ -1,4 +1,4 @@
-import {initTheme} from './theme.js';
+import {initTheme} from './theme.js?v=4.0.2';
 
 const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
 const toast = document.querySelector('#toast');

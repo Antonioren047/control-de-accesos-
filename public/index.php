@@ -281,8 +281,8 @@ $formatDate = static function (?string $value): string {
         <button class="submit" type="submit">Guardar registro</button>
     </form>
 </dialog>
-<script type="module" src="assets/js/app.js"></script>
-<script type="module" src="assets/js/phase3.js"></script>
-<script type="module" src="assets/js/phase4.js"></script>
+<script type="module" src="assets/js/app.js?v=4.0.2"></script>
+<script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
+<script type="module" src="assets/js/phase4.js?v=4.0.2"></script>
 </body>
 </html>

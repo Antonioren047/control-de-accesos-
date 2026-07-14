@@ -1,4 +1,4 @@
-import {api, notify} from './app.js';
+import {api, notify} from './app.js?v=4.0.2';
 
 const workspaces = [...document.querySelectorAll('[data-organization-module]')];
 const dialog = document.querySelector('#organizationDialog');

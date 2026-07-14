@@ -1,4 +1,4 @@
-import {api, notify} from './app.js';
+import {api, notify} from './app.js?v=4.0.2';
 
 const workspaces=[...document.querySelectorAll('[data-organization-module="usuarios"],[data-organization-module="turnos"]')];
 const dialog=document.querySelector('#workforceDialog');const form=document.querySelector('#workforceForm');const fields=document.querySelector('#workforceFields');const title=document.querySelector('#workforceDialogTitle');const message=document.querySelector('#workforceMessage');let entity='';let cache={};
