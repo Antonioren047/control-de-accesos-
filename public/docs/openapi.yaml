@@ -1,35 +1,87 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 1.0.0
-  description: Contrato inicial de la Fase 1.
+  version: 7.0.0
+  description: Fase 7. Incluye visitas y proveedores con captura segura.
 servers:
   - url: /control-de-accesos/public/api
 paths:
   /health:
     get:
       summary: Consultar estado del servicio
-      operationId: getHealth
-      responses:
-        '200':
-          description: Servicio disponible
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-components:
-  schemas:
-    SuccessResponse:
-      type: object
-      required: [success, message, data]
-      properties:
-        success: {type: boolean, example: true}
-        message: {type: string}
-        data: {type: object}
-    ErrorResponse:
-      type: object
-      required: [success, message, errors]
-      properties:
-        success: {type: boolean, example: false}
-        message: {type: string}
-        errors: {type: object}
+      responses: {'200': {description: Servicio disponible}}
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      responses: {'200': {description: Sesión iniciada}, '401': {description: Credenciales incorrectas}, '429': {description: Espera progresiva}}
+  /auth/me:
+    get:
+      summary: Consultar sesión y permisos
+      responses: {'200': {description: Sesión activa}, '401': {description: No autenticado}}
+  /auth/logout:
+    post:
+      summary: Cerrar sesión
+      responses: {'200': {description: Sesión cerrada}}
+  /auth/password:
+    post:
+      summary: Cambiar contraseña propia
+      responses: {'200': {description: Contraseña actualizada}, '422': {description: Datos inválidos}}
+  /auth/theme:
+    post:
+      summary: Guardar tema del usuario
+      responses: {'200': {description: Tema guardado}}
+  /auth/sessions:
+    get:
+      summary: Consultar sesiones activas propias
+      responses: {'200': {description: Sesiones activas}, '403': {description: Sin permiso}}
+  /auth/sessions/revoke:
+    post:
+      summary: Revocar otra sesión propia
+      responses: {'200': {description: Sesión revocada}, '404': {description: Sesión no encontrada}}
+  /users/password-reset:
+    post:
+      summary: Restablecer contraseña con permiso
+      responses: {'200': {description: Contraseña restablecida}, '403': {description: Sin permiso}}
+  /authorization/roles:
+    get:
+      summary: Consultar matriz de permisos por rol
+      responses: {'200': {description: Matriz disponible}, '403': {description: Sin permiso permissions.manage}}
+    post:
+      summary: Activar o desactivar un permiso para un rol
+      responses: {'200': {description: Permiso actualizado}, '403': {description: Sin permiso}, '422': {description: Datos inválidos}}
+  /organization/clients:
+    get: {summary: Listar clientes autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/locations:
+    get: {summary: Listar lugares autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/access-points:
+    get: {summary: Listar puntos autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/units:
+    get: {summary: Listar unidades autorizadas, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/residents:
+    get: {summary: Listar residentes autorizados, responses: {'200': {description: Catálogo disponible}, '403': {description: Sin permiso}}}
+  /organization/create:
+    post: {summary: Crear registro organizacional, responses: {'201': {description: Registro creado}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}
+  /organization/status:
+    post: {summary: Cambiar estado lógico, responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}}
+  /offline/sync:
+    post: {summary: Sincronizar operaciones de un dispositivo autorizado, responses: {'200': {description: Lote procesado}, '401': {description: Dispositivo no autorizado}, '422': {description: Lote inválido}}}
+  /offline/conflicts:
+    get: {summary: Consultar conflictos y operaciones vencidas, responses: {'200': {description: Registros pendientes}, '403': {description: Sin permiso}}}
+  /offline/review:
+    post: {summary: Aceptar o rechazar una operación offline, responses: {'200': {description: Revisión registrada}, '403': {description: Fuera de alcance}, '422': {description: Datos inválidos}}}
+  /visits:
+    get: {summary: Listar visitas autorizadas, responses: {'200': {description: Visitas}}}
+    post: {summary: Crear visita y QR, responses: {'201': {description: Visita creada}, '409': {description: Duplicado o límite}}}
+  /visits/validate:
+    get: {summary: Validar QR de visita en línea, responses: {'200': {description: QR válido}, '409': {description: Acceso no permitido}}}
+  /visits/check-in:
+    post: {summary: Registrar entrada de visitante, responses: {'201': {description: Entrada registrada}}}
+  /visits/check-out:
+    post: {summary: Registrar salida de visitante, responses: {'200': {description: Salida registrada}}}
+  /providers:
+    get: {summary: Listar proveedores, responses: {'200': {description: Proveedores}}}
+    post: {summary: Crear acceso previo con QR, responses: {'201': {description: Acceso creado}}}
+  /providers/check-in:
+    post: {summary: Registrar proveedor con o sin QR, responses: {'201': {description: Entrada registrada}}}
+  /providers/check-out:
+    post: {summary: Registrar salida de proveedor, responses: {'200': {description: Salida registrada}}}

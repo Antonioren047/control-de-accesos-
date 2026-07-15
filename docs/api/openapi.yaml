@@ -1,23 +1,177 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 1.0.0
-  description: Contrato inicial de la Fase 1.
+  version: 7.0.0
+  description: Contrato de autenticación, operación, sincronización, visitas y proveedores hasta la Fase 7.
 servers:
   - url: /control-de-accesos/public/api
 paths:
   /health:
     get:
       summary: Consultar estado del servicio
-      operationId: getHealth
       responses:
-        '200':
-          description: Servicio disponible
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+        '200': {description: Servicio disponible, content: {application/json: {schema: {$ref: '#/components/schemas/SuccessResponse'}}}}
+  /auth/login:
+    post:
+      summary: Iniciar sesión
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string, format: password}
+      responses:
+        '200': {description: Sesión iniciada}
+        '401': {description: Credenciales incorrectas}
+        '429': {description: Espera progresiva activa}
+  /auth/me:
+    get:
+      summary: Consultar sesión y permisos efectivos
+      responses:
+        '200': {description: Sesión activa}
+        '401': {description: Sesión ausente, expirada o revocada}
+  /auth/logout:
+    post:
+      summary: Cerrar la sesión actual
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Sesión cerrada}
+  /auth/password:
+    post:
+      summary: Cambiar contraseña propia y revocar las demás sesiones
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password]
+              properties:
+                current_password: {type: string, format: password}
+                new_password: {type: string, format: password, minLength: 12}
+      responses:
+        '200': {description: Contraseña actualizada}
+        '422': {description: Política o contraseña actual inválida}
+  /auth/theme:
+    post:
+      summary: Guardar preferencia de tema
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [theme]
+              properties:
+                theme: {type: string, enum: [auto, light, dark]}
+      responses:
+        '200': {description: Preferencia guardada}
+  /auth/sessions:
+    get:
+      summary: Consultar sesiones activas propias
+      responses:
+        '200': {description: Sesiones activas}
+        '401': {description: Sesión no válida}
+        '403': {description: Permiso auth.sessions.view requerido}
+  /auth/sessions/revoke:
+    post:
+      summary: Revocar una sesión propia distinta de la actual
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Sesión revocada}
+        '404': {description: Sesión inexistente, ajena o ya revocada}
+  /users/password-reset:
+    post:
+      summary: Restablecer administrativamente una contraseña
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Contraseña restablecida y sesiones revocadas}
+        '403': {description: Permiso users.password_reset requerido}
+  /authorization/roles:
+    get:
+      summary: Consultar matriz de permisos por rol
+      responses:
+        '200': {description: Matriz disponible}
+        '403': {description: Permiso permissions.manage requerido}
+    post:
+      summary: Activar o desactivar un permiso para un rol
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses:
+        '200': {description: Permiso actualizado}
+        '403': {description: Permiso permissions.manage requerido}
+        '422': {description: Datos inválidos}
+  /organization/clients:
+    get: {summary: Listar clientes dentro del alcance, responses: {'200': {description: Clientes autorizados}, '403': {description: Sin permiso}}}
+  /organization/locations:
+    get: {summary: Listar lugares dentro del alcance, responses: {'200': {description: Lugares autorizados}, '403': {description: Sin permiso}}}
+  /organization/access-points:
+    get: {summary: Listar puntos de acceso autorizados, responses: {'200': {description: Puntos autorizados}, '403': {description: Sin permiso}}}
+  /organization/units:
+    get: {summary: Listar unidades autorizadas o propias, responses: {'200': {description: Unidades autorizadas}, '403': {description: Sin permiso}}}
+  /organization/residents:
+    get: {summary: Listar residentes dentro del alcance, responses: {'200': {description: Residentes autorizados}, '403': {description: Sin permiso}}}
+  /organization/create:
+    post:
+      summary: Crear cliente, lugar, punto, unidad o residente
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'201': {description: Registro creado}, '403': {description: Fuera de alcance}, '409': {description: Código o correo duplicado}, '422': {description: Datos inválidos}}
+  /organization/status:
+    post:
+      summary: Activar o desactivar lógicamente un registro
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'200': {description: Estado actualizado}, '403': {description: Fuera de alcance}}
+  /offline/sync:
+    post:
+      summary: Sincronizar hasta 50 operaciones de un dispositivo preautorizado
+      parameters:
+        - name: X-Offline-Token
+          in: header
+          required: true
+          schema: {type: string}
+      responses: {'200': {description: Lote procesado de forma idempotente}, '401': {description: Dispositivo no autorizado o expirado}, '422': {description: Operación no permitida}}
+  /offline/conflicts:
+    get:
+      summary: Consultar conflictos y operaciones vencidas dentro del alcance
+      responses: {'200': {description: Registros pendientes de revisión}, '403': {description: Permiso offline_conflicts.manage requerido}}
+  /offline/review:
+    post:
+      summary: Aceptar o rechazar una operación offline con comentario
+      parameters: [{$ref: '#/components/parameters/CsrfToken'}]
+      responses: {'200': {description: Revisión registrada}, '403': {description: Sin permiso o fuera de alcance}, '422': {description: Decisión o comentario inválido}}
+  /access/catalog:
+    get: {summary: Consultar unidades autorizadas para generar accesos, responses: {'200': {description: Catálogo autorizado}, '401': {description: No autenticado}}}
+  /visits:
+    get: {summary: Listar visitas dentro del alcance, responses: {'200': {description: Visitas autorizadas}, '403': {description: Sin permiso}}}
+    post: {summary: Generar visita y QR como residente, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Visita creada}, '409': {description: Duplicado o límite activo}, '422': {description: Datos inválidos}}}
+  /visits/action:
+    post: {summary: Editar, cancelar o registrar intento de compartir, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Acción registrada}, '409': {description: Visita ya utilizada}}}
+  /visits/validate:
+    get: {summary: Validar QR en una sesión operativa activa, responses: {'200': {description: QR válido para entrada o salida}, '409': {description: Fuera de horario o estado inválido}}}
+  /visits/check-in:
+    post: {summary: Registrar entrada, fotografías y privacidad, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Entrada registrada}, '422': {description: Captura incompleta}}}
+  /visits/check-out:
+    post: {summary: Registrar salida con el mismo QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Salida registrada}}}
+  /providers:
+    get: {summary: Listar proveedores dentro del alcance, responses: {'200': {description: Accesos de proveedor}}}
+    post: {summary: Crear acceso previo de proveedor con QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Acceso creado}}}
+  /providers/check-in:
+    post: {summary: Registrar proveedor con o sin QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Entrada registrada}}}
+  /providers/check-out:
+    post: {summary: Registrar salida de proveedor, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Salida registrada}}}
 components:
+  parameters:
+    CsrfToken:
+      name: X-CSRF-Token
+      in: header
+      required: true
+      schema: {type: string}
   schemas:
     SuccessResponse:
       type: object

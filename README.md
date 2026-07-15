@@ -1,6 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica de la **Fase 1** para una plataforma multiempresa de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 7** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+
+La Fase 7 incorpora visitas generadas por residentes, QR de entrada/salida, captura privada de identificaciones y proveedores con o sin QR. Consulte [la guía técnica](docs/manual-tecnico/fase-7-visitas-proveedores.md) y [el manual de usuario](docs/manual-usuario/fase-7.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
 
 ## Incluido
 
@@ -12,6 +14,20 @@ Base técnica de la **Fase 1** para una plataforma multiempresa de vigilancia. P
 - Dashboard responsive generado a partir de Google Stitch, tema claro/oscuro/automático y navegación adaptable.
 - Health check, OpenAPI 3.0, Swagger UI y páginas 403/404/500.
 - PHPUnit y documentación inicial para XAMPP/cPanel.
+- Inicio y cierre de sesión, tokens almacenados mediante hash y expiración máxima de 24 horas.
+- Bloqueo progresivo desde el quinto fallo, permisos efectivos en backend y auditoría de seguridad.
+- Cambio de contraseña, revocación de sesiones y preferencia de tema por usuario.
+- Clientes, lugares, puntos de acceso, unidades y residentes con baja lógica.
+- Alcances aislados por cliente, lugar, punto y unidad, aplicados en backend.
+- Paneles SPA de Fase 3 y datos demo idempotentes.
+- Acceso operativo responsive, captura de cámara, datos del dispositivo y cierre mediante QR.
+- Asistencias puntuales, retardos, fuera de horario, salidas anticipadas, tiempo extra y turnos incompletos.
+- Dispositivo offline preautorizado por 24 horas, cola idempotente y sincronización en lotes de 50.
+- Conservación de conflictos y operaciones con más de 12 horas para revisión supervisada.
+- Evidencias locales eliminadas solamente después de una confirmación positiva del servidor.
+- Visitas con vigencia configurable, límite de QR activos, edición/cancelación previa y detección de duplicados.
+- Entrada y salida de visitantes con el mismo QR, fotografías directas de cámara y privacidad auditable.
+- Accesos de proveedores preautorizados o registrados por el vigilante sin QR.
 
 ## Requisitos
 
@@ -51,4 +67,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-No se implementaron autenticación, clientes, lugares, vigilantes, visitas, eventos, supervisiones, reportes ni procesos Cron funcionales. Son Fases 2 a 12 y requieren aprobación expresa.
+Las Fases 1 a 7 están implementadas. Eventos, recorridos, supervisiones, notificaciones, reportes y Cron corresponden a las Fases 8 a 12.
