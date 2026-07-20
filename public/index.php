@@ -71,6 +71,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.2">
     <link rel="stylesheet" href="assets/css/phase9.css?v=9.0.0">
     <link rel="stylesheet" href="assets/css/phase10.css?v=10.0.0">
+    <link rel="stylesheet" href="assets/css/phase11.css?v=11.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -154,6 +155,7 @@ $formatDate = static function (?string $value): string {
             $isPhaseSevenModule = in_array($moduleId, ['visitas','proveedores'], true);
             $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
             $isPhaseNineModule = $moduleId === 'supervisiones';
+            $isPhaseElevenModule = in_array($moduleId,['reportes','auditoria','mantenimiento'],true);
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -229,6 +231,14 @@ $formatDate = static function (?string $value): string {
                             <button class="ghost-button" type="button" data-phase9-pin>Configurar PIN</button><button class="submit" type="button" data-phase9-start>Iniciar manual</button><button class="ghost-button" type="button" data-phase9-refresh>Actualizar</button>
                         </div></div>
                         <div class="organization-content" data-phase9-content><article class="security-card"><p class="muted">Consultando supervisiones…</p></article></div>
+                    </section>
+                <?php elseif ($isPhaseElevenModule): ?>
+                    <section class="phase11-workspace" data-phase11-module="<?= htmlspecialchars($moduleId) ?>">
+                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 11 activa</p><h3><?= $moduleId==='reportes'?'GeneraciÃ³n protegida de documentos PDF':($moduleId==='auditoria'?'Trazabilidad permanente de acciones':'Almacenamiento y procesos automÃ¡ticos') ?></h3></div><button class="ghost-button" type="button" data-phase11-refresh>Actualizar</button></div>
+                        <?php if($moduleId==='reportes'): ?><form class="phase11-filters" data-report-form><label>Reporte<select name="report_type" required></select></label><label>Desde<input name="date_from" type="date" value="<?= gmdate('Y-m-d',strtotime('-30 days')) ?>" required></label><label>Hasta<input name="date_to" type="date" value="<?= gmdate('Y-m-d') ?>" required></label><label>Cliente<select name="client_id"><option value="">Todos</option></select></label><label>Lugar<select name="location_id"><option value="">Todos</option></select></label><label>Punto<select name="access_point_id"><option value="">Todos</option></select></label><label>Vigilante<select name="guard_id"><option value="">Todos</option></select></label><label>Turno<select name="shift_id"><option value="">Todos</option></select></label><button class="submit" type="submit">Generar PDF</button></form><?php endif; ?>
+                        <?php if($moduleId==='auditoria'): ?><form class="phase11-filters" data-audit-form><label>Desde<input name="date_from" type="date" value="<?= gmdate('Y-m-d',strtotime('-30 days')) ?>"></label><label>Hasta<input name="date_to" type="date" value="<?= gmdate('Y-m-d') ?>"></label><label>MÃ³dulo<select name="module"><option value="">Todos</option></select></label><label>Usuario<select name="user_id"><option value="">Todos</option></select></label><button class="submit" type="submit">Consultar</button><a class="ghost-button" data-audit-pdf href="audit-report.php" target="_blank">Exportar PDF</a></form><?php endif; ?>
+                        <?php if($moduleId==='mantenimiento'): ?><div class="phase11-cron-actions"><button class="submit" type="button" data-cron-run>Ejecutar procesos ahora</button><small>La ejecuciÃ³n es idempotente y cuenta con bloqueo de concurrencia.</small></div><?php endif; ?>
+                        <div class="organization-content" data-phase11-content><article class="security-card"><p class="muted">Consultando informaciÃ³nâ€¦</p></article></div>
                     </section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
@@ -359,5 +369,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase8-panel.js?v=8.1.0"></script>
 <script type="module" src="assets/js/phase9-panel.js?v=9.0.0"></script>
 <script type="module" src="assets/js/phase10.js?v=10.0.0"></script>
+<script type="module" src="assets/js/phase11.js?v=11.0.0"></script>
 </body>
 </html>

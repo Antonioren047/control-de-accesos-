@@ -78,7 +78,7 @@ return [
             'clients.manage', 'locations.manage', 'access_points.manage', 'units.manage',
             'users.manage', 'guards.manage', 'guards.credential', 'guards.pin_reset', 'residents.manage', 'shifts.manage',
             'assignments.manage', 'operations.view', 'attendance.view', 'visits.view',
-            'providers.manage', 'access_identifications.view', 'events.manage', 'rounds.view', 'supervisions.manage', 'supervisions.schedule', 'notifications.view', 'dashboards.view', 'reports.view', 'system.configure',
+            'providers.manage', 'access_identifications.view', 'events.manage', 'rounds.view', 'supervisions.manage', 'supervisions.schedule', 'notifications.view', 'dashboards.view', 'reports.view', 'audit.view', 'system.configure',
         ],
         'supervisor' => [
             'locations.view', 'access_points.view', 'units.view', 'guards.view', 'shifts.view', 'assignments.view', 'assignments.request_change', 'operations.view',

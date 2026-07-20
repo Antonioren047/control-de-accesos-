@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);
+return static function(PDO$pdo,bool$demo=false):void{if(!$demo)return;$user=$pdo->query("SELECT u.id FROM users u JOIN roles r ON r.id=u.role_id WHERE r.code='superadmin' ORDER BY u.id LIMIT 1")->fetchColumn();if(!$user)return;$exists=(int)$pdo->query("SELECT COUNT(*) FROM report_generations WHERE folio='REP-DEMO-F11'")->fetchColumn();if(!$exists)$pdo->prepare("INSERT INTO report_generations(folio,report_type,filters_json,generated_by,status,generated_at) VALUES('REP-DEMO-F11','events',JSON_OBJECT('date_from',CURRENT_DATE,'date_to',CURRENT_DATE),?,'ready',UTC_TIMESTAMP())")->execute([$user]);};

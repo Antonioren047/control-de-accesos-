@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 8.1.0
-  description: Fase 8. Incluye incidencias auditables, evidencias, recorridos y novedades.
+  version: 11.0.0
+  description: Fase 11. Incluye reportes PDF, auditoría, almacenamiento y monitoreo Cron.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -135,3 +135,13 @@ paths:
     post: {summary: Marcar notificaciones del vigilante, responses: {'200': {description: Lectura registrada}}}
   /guard/dashboard:
     get: {summary: Consultar dashboard del vigilante, responses: {'200': {description: Indicadores propios}}}
+  /reports/catalog:
+    get: {summary: Consultar tipos, filtros e historial de reportes, responses: {'200': {description: Catálogo dentro del alcance}}}
+  /reports:
+    post: {summary: Generar reporte PDF con folio, responses: {'201': {description: Reporte preparado}, '422': {description: Rango o tipo inválido}}}
+  /audit:
+    get: {summary: Consultar auditoría permanente dentro del alcance, responses: {'200': {description: Registros auditables}}}
+  /maintenance:
+    get: {summary: Consultar almacenamiento y estado de Cron, responses: {'200': {description: Monitor técnico}}}
+  /maintenance/run:
+    post: {summary: Ejecutar tareas idempotentes de mantenimiento, responses: {'200': {description: Resultado por tarea}, '403': {description: Sin permiso}}}

@@ -13,6 +13,9 @@ use Vigilancia\Controllers\AccessController;
 use Vigilancia\Controllers\EventController;
 use Vigilancia\Controllers\SupervisionController;
 use Vigilancia\Controllers\NotificationController;
+use Vigilancia\Controllers\ReportController;
+use Vigilancia\Controllers\AuditController;
+use Vigilancia\Controllers\MaintenanceController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -41,6 +44,13 @@ use Vigilancia\Services\SupervisionService;
 use Vigilancia\Services\SupervisionEvidenceService;
 use Vigilancia\Repositories\NotificationRepository;
 use Vigilancia\Services\NotificationService;
+use Vigilancia\Repositories\ReportRepository;
+use Vigilancia\Repositories\AuditRepository;
+use Vigilancia\Repositories\MaintenanceRepository;
+use Vigilancia\Services\ReportService;
+use Vigilancia\Services\AuditService;
+use Vigilancia\Services\CronService;
+use Vigilancia\Services\MaintenanceService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -68,10 +78,14 @@ $accessController = new AccessController($auth,new AccessService($pdo,new Access
 $eventController = new EventController($auth,new EventService($pdo,new EventRepository($pdo),new OperationalRepository($pdo),new EventEvidenceService($root),new SecurityLogRepository($pdo)));
 $supervisionController = new SupervisionController($auth,new SupervisionService($pdo,new SupervisionRepository($pdo),new SupervisionEvidenceService($root),new SecurityLogRepository($pdo)));
 $notificationController = new NotificationController($auth,new NotificationService(new NotificationRepository($pdo),new PermissionRepository($pdo)));
+$reportController = new ReportController($auth,new ReportService(new ReportRepository($pdo),new PermissionRepository($pdo),new SecurityLogRepository($pdo)));
+$auditController = new AuditController($auth,new AuditService(new AuditRepository($pdo),new PermissionRepository($pdo)));
+$maintenanceRepository = new MaintenanceRepository($pdo);
+$maintenanceController = new MaintenanceController($auth,new MaintenanceService($maintenanceRepository,new PermissionRepository($pdo),new CronService($maintenanceRepository,$root),new SecurityLogRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '10.0.0',
+    'version' => '11.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -148,3 +162,8 @@ $router->get('/dashboard', [$notificationController, 'dashboard']);
 $router->get('/guard/notifications', [$notificationController, 'guardNotifications']);
 $router->post('/guard/notifications/read', [$notificationController, 'guardRead']);
 $router->get('/guard/dashboard', [$notificationController, 'guardDashboard']);
+$router->get('/reports/catalog', [$reportController, 'catalog']);
+$router->post('/reports', [$reportController, 'create']);
+$router->get('/audit', [$auditController, 'list']);
+$router->get('/maintenance', [$maintenanceController, 'monitor']);
+$router->post('/maintenance/run', [$maintenanceController, 'run']);
