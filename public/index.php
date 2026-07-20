@@ -332,6 +332,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
 <script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
-<script type="module" src="assets/js/phase8-panel.js?v=8.0.0"></script>
+<script type="module" src="assets/js/phase8-panel.js?v=8.0.1"></script>
 </body>
 </html>
