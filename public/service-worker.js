@@ -1,4 +1,4 @@
-const CACHE='vigilancia-fase8-v4';
+const CACHE='vigilancia-fase8-v5';
 const SHELL=['./guard-access.php','./guard-operation.php','./assets/css/styles.css','./assets/css/phase5.css','./assets/css/guard-portal.css','./assets/css/phase6.css','./assets/css/phase8.css','./assets/css/phase8-guard.css','./assets/js/guard-access.js','./assets/js/guard-operation.js','./assets/js/qr-camera-fallback.js','./assets/js/offline-queue.js','./assets/js/phase7-guard.js','./assets/js/phase8-guard.js','./assets/images/logo.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
