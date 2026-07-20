@@ -102,7 +102,7 @@ $formatDate = static function (?string $value): string {
                 <span class="connection"><i></i>Sesión activa</span>
                 <div class="notification-center">
                     <button class="notification-button" id="notificationButton" type="button" aria-label="Abrir notificaciones" aria-expanded="false">♢<span id="notificationBadge" hidden>0</span></button>
-                    <div class="notification-dropdown" id="notificationDropdown" hidden><div class="notification-dropdown-head"><strong>Notificaciones</strong><button type="button" id="readAllNotifications">Marcar todas</button></div><div id="notificationPreview"><p class="muted">Consultando…</p></div><a href="#notificaciones" data-view-target="notificaciones">Ver más</a></div>
+                    <div class="notification-dropdown" id="notificationDropdown" hidden><div class="notification-dropdown-head"><strong>Notificaciones</strong><button type="button" id="readAllNotifications">Marcar todas</button></div><div id="notificationPreview"><p class="muted">Consultando…</p></div></div>
                 </div>
                 <label class="theme-control">Tema
                     <select id="themeSelect" aria-label="Tema">
@@ -154,7 +154,6 @@ $formatDate = static function (?string $value): string {
             $isPhaseSevenModule = in_array($moduleId, ['visitas','proveedores'], true);
             $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
             $isPhaseNineModule = $moduleId === 'supervisiones';
-            $isPhaseTenModule = $moduleId === 'notificaciones';
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -231,8 +230,6 @@ $formatDate = static function (?string $value): string {
                         </div></div>
                         <div class="organization-content" data-phase9-content><article class="security-card"><p class="muted">Consultando supervisiones…</p></article></div>
                     </section>
-                <?php elseif ($isPhaseTenModule): ?>
-                    <section class="phase10-workspace" data-phase10-module="notificaciones"><div class="organization-toolbar"><div><p class="eyebrow">Fase 10 activa</p><h3>Centro de notificaciones</h3></div><div class="organization-actions"><button class="ghost-button" type="button" data-notifications-read-all>Marcar todas como leídas</button><button class="ghost-button" type="button" data-notifications-refresh>Actualizar</button></div></div><div class="notification-panel" data-notification-panel><p class="muted">Consultando notificaciones…</p></div></section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
                         <div><p class="eyebrow">Acceso concedido</p><h3>Módulo disponible para <?= htmlspecialchars($profile['role']['name']) ?></h3></div>

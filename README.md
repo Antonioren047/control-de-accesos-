@@ -36,7 +36,7 @@ La Fase 10 incorpora notificaciones internas y dashboards por rol. Consulte [la 
 - Consulta contextual del vigilante presente, eventos y recorridos durante la supervisión.
 - Evidencia fotográfica privada, doble confirmación por nombre y PIN y motivo de ausencia obligatorio.
 - Supervisiones finalizadas inmutables, comentarios posteriores y PDF protegido con folio auditable.
-- Centro de notificaciones con badge, últimas diez, panel ampliado y lectura individual o total.
+- Globo de notificaciones con badge, últimas diez y lectura individual o total, sin módulo lateral independiente.
 - Avisos deduplicados de sesiones, retardos, eventos, recorridos, supervisiones y visitas.
 - Dashboard por rol con filtros de fecha, cliente, lugar y turno, actualizado cada minuto.
 - Indicadores restringidos por alcance también en el portal operativo del vigilante.

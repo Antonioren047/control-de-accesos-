@@ -27,7 +27,7 @@
 - [ ] El PDF abre con folio, alcance, observaciones, evidencias y ambas confirmaciones.
 - [ ] El icono de notificaciones muestra el número de no leídas y despliega las últimas diez.
 - [ ] Una notificación abre únicamente un módulo autorizado y queda marcada como leída.
-- [ ] “Marcar todas” limpia el badge y el panel ampliado conserva el historial.
+- [ ] “Marcar todas” limpia el badge y no existe un módulo lateral independiente de notificaciones.
 - [ ] Administrador y supervisor solo observan alertas y métricas de sus lugares autorizados.
 - [ ] El residente recibe avisos de sus visitas y no ve métricas operativas de otros usuarios.
 - [ ] El vigilante consulta comentarios y actividad desde su portal operativo, no desde el login web.
