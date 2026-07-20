@@ -68,7 +68,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase5.css">
     <link rel="stylesheet" href="assets/css/phase6.css">
     <link rel="stylesheet" href="assets/css/phase7.css">
-    <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.0">
+    <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.2">
 </head>
 <body>
 <div class="app-shell">
@@ -332,6 +332,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
 <script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
-<script type="module" src="assets/js/phase8-panel.js?v=8.0.1"></script>
+<script type="module" src="assets/js/phase8-panel.js?v=8.0.2"></script>
 </body>
 </html>
