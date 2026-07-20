@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 7.0.0
-  description: Fase 7. Incluye visitas y proveedores con captura segura.
+  version: 8.0.0
+  description: Fase 8. Incluye eventos, evidencias, recorridos y novedades.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -85,3 +85,25 @@ paths:
     post: {summary: Registrar proveedor con o sin QR, responses: {'201': {description: Entrada registrada}}}
   /providers/check-out:
     post: {summary: Registrar salida de proveedor, responses: {'200': {description: Salida registrada}}}
+  /event-types:
+    get: {summary: Consultar tipos de evento, responses: {'200': {description: Catálogo autorizado}}}
+    post: {summary: Configurar un tipo de evento, responses: {'200': {description: Tipo guardado}, '403': {description: Sin permiso}}}
+  /events:
+    get: {summary: Consultar eventos dentro del alcance, responses: {'200': {description: Eventos autorizados}}}
+    post: {summary: Registrar evento y evidencias, responses: {'201': {description: Evento registrado}, '422': {description: Datos inválidos}}}
+  /events/evidence:
+    post: {summary: Agregar evidencia capturada, responses: {'201': {description: Evidencia guardada}}}
+  /events/comment:
+    post: {summary: Comentar un evento, responses: {'201': {description: Comentario registrado}}}
+  /events/cancel:
+    post: {summary: Cancelar un evento con motivo, responses: {'200': {description: Cancelación auditada}}}
+  /rounds:
+    get: {summary: Consultar recorridos, responses: {'200': {description: Recorridos autorizados}}}
+  /rounds/start:
+    post: {summary: Iniciar recorrido, responses: {'201': {description: Recorrido iniciado}, '409': {description: Ya existe uno abierto}}}
+  /rounds/finish:
+    post: {summary: Finalizar recorrido, responses: {'200': {description: Recorrido finalizado}, '422': {description: Falta evidencia u observación}}}
+  /rounds/close:
+    post: {summary: Cerrar recorrido por supervisión, responses: {'200': {description: Cierre registrado}}}
+  /shift-novelties:
+    post: {summary: Registrar entrega de turno, responses: {'201': {description: Novedad registrada}}}

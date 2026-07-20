@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 7.0.0
-  description: Contrato de autenticación, operación, sincronización, visitas y proveedores hasta la Fase 7.
+  version: 8.0.0
+  description: Contrato de autenticación y operación hasta la Fase 8, incluidos eventos, evidencias, recorridos y novedades.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -165,6 +165,28 @@ paths:
     post: {summary: Registrar proveedor con o sin QR, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Entrada registrada}}}
   /providers/check-out:
     post: {summary: Registrar salida de proveedor, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Salida registrada}}}
+  /event-types:
+    get: {summary: Consultar tipos de evento, responses: {'200': {description: Catálogo autorizado}}}
+    post: {summary: Crear o configurar un tipo de evento, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Tipo guardado}, '403': {description: Sin permiso}}}
+  /events:
+    get: {summary: Consultar eventos dentro del alcance, responses: {'200': {description: Eventos autorizados}}}
+    post: {summary: Registrar evento desde una sesión operativa, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Evento registrado}, '422': {description: Descripción o evidencia inválida}}}
+  /events/evidence:
+    post: {summary: Agregar una evidencia capturada, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Evidencia privada guardada}, '409': {description: Límite alcanzado}}}
+  /events/comment:
+    post: {summary: Comentar un evento como supervisor, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Comentario inmutable registrado}}}
+  /events/cancel:
+    post: {summary: Cancelar conservando evento y evidencia, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Cancelación auditada}}}
+  /rounds:
+    get: {summary: Consultar recorridos dentro del alcance, responses: {'200': {description: Recorridos autorizados}}}
+  /rounds/start:
+    post: {summary: Iniciar un recorrido, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Recorrido iniciado}, '409': {description: Ya existe uno abierto}}}
+  /rounds/finish:
+    post: {summary: Finalizar con evidencia y observaciones, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Recorrido finalizado}, '422': {description: Falta evidencia u observación}}}
+  /rounds/close:
+    post: {summary: Cerrar recorrido por supervisión, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Cierre auditado}}}
+  /shift-novelties:
+    post: {summary: Registrar entrega de turno, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Novedad registrada}, '409': {description: Ya registrada}}}
 components:
   parameters:
     CsrfToken:

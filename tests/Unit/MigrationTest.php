@@ -18,5 +18,6 @@ final class MigrationTest extends TestCase
         self::assertIsCallable(require $root . '007_guard_operational_login_only.php');
         self::assertIsCallable(require $root . '008_offline_sync.php');
         self::assertIsCallable(require $root . '009_visitors_providers.php');
+        self::assertIsCallable(require $root . '010_events_rounds_novelties.php');
     }
 }

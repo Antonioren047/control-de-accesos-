@@ -42,6 +42,7 @@ final class OperationalService
     public function close(array $in):array
     {
         $row=$this->current();$token=trim((string)($in['qr_token']??''));$credential=$token===''?null:$this->findCredential($token);if(!$credential||(int)$credential['guard_user_id']!==(int)$row['guard_user_id'])throw new HttpException('Escanea el QR o ingresa la referencia vigente del vigilante para cerrar.',401);
+        if(!$this->repository->hasShiftNovelty((int)$row['id']))throw new HttpException('Registra la novedad de entrega antes de cerrar el turno.',409);
         $now=new DateTimeImmutable('now',new DateTimeZone('UTC'));$exit=AttendanceClassifier::exit($now,new DateTimeImmutable($row['scheduled_end_at'],new DateTimeZone('UTC')),(int)$row['early_departure_tolerance_minutes'],(int)$row['overtime_after_minutes']);$this->repository->close((int)$row['id'],$now->format('Y-m-d H:i:s'),$exit['classification'],$exit['minutes_early'],$exit['overtime_minutes'],'qr',(int)$row['guard_user_id'],null);$this->logs->record((int)$row['guard_user_id'],'operations.session_closed',ClientInfo::ip(),ClientInfo::userAgent(),['session_id'=>$row['id'],'classification'=>$exit['classification']]);$this->clear();return['classification'=>$exit['classification']];
     }
     public function list(array $actor,bool $attendance):array{$this->authorization->require($actor,$attendance?($actor['role_code']==='guard'?'attendance.own':'attendance.view'):'operations.view');return$this->repository->list($actor,$attendance);}

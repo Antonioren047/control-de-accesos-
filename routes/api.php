@@ -10,6 +10,7 @@ use Vigilancia\Controllers\WorkforceController;
 use Vigilancia\Controllers\OperationalController;
 use Vigilancia\Controllers\OfflineController;
 use Vigilancia\Controllers\AccessController;
+use Vigilancia\Controllers\EventController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -30,6 +31,9 @@ use Vigilancia\Services\OfflineEvidenceService;
 use Vigilancia\Repositories\AccessRepository;
 use Vigilancia\Services\AccessService;
 use Vigilancia\Services\AccessAssetService;
+use Vigilancia\Repositories\EventRepository;
+use Vigilancia\Services\EventService;
+use Vigilancia\Services\EventEvidenceService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -54,10 +58,11 @@ $operationalController = new OperationalController(
 );
 $offlineController = new OfflineController($auth,new OfflineService($pdo,new OfflineRepository($pdo),new OfflineEvidenceService($root),new SecurityLogRepository($pdo),new OperationalRepository($pdo)));
 $accessController = new AccessController($auth,new AccessService($pdo,new AccessRepository($pdo),new OperationalRepository($pdo),new AccessAssetService($root),new SecurityLogRepository($pdo)));
+$eventController = new EventController($auth,new EventService($pdo,new EventRepository($pdo),new OperationalRepository($pdo),new EventEvidenceService($root),new SecurityLogRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '7.0.0',
+    'version' => '8.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -105,3 +110,17 @@ $router->post('/providers', [$accessController, 'createProvider']);
 $router->get('/providers/validate', [$accessController, 'validateProvider']);
 $router->post('/providers/check-in', [$accessController, 'checkInProvider']);
 $router->post('/providers/check-out', [$accessController, 'checkOutProvider']);
+$router->get('/event-types', [$eventController, 'types']);
+$router->post('/event-types', [$eventController, 'saveType']);
+$router->get('/events', [$eventController, 'events']);
+$router->get('/events/detail', [$eventController, 'details']);
+$router->post('/events', [$eventController, 'create']);
+$router->post('/events/evidence', [$eventController, 'evidence']);
+$router->post('/events/comment', [$eventController, 'comment']);
+$router->post('/events/cancel', [$eventController, 'cancel']);
+$router->get('/phase8/guard', [$eventController, 'guardDashboard']);
+$router->post('/rounds/start', [$eventController, 'startRound']);
+$router->post('/rounds/finish', [$eventController, 'finishRound']);
+$router->get('/rounds', [$eventController, 'rounds']);
+$router->post('/rounds/close', [$eventController, 'closeRound']);
+$router->post('/shift-novelties', [$eventController, 'novelty']);

@@ -1,8 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 7** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 8** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
-La Fase 7 incorpora visitas generadas por residentes, QR de entrada/salida, captura privada de identificaciones y proveedores con o sin QR. Consulte [la guía técnica](docs/manual-tecnico/fase-7-visitas-proveedores.md) y [el manual de usuario](docs/manual-usuario/fase-7.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
+La Fase 8 incorpora eventos inmutables, evidencias privadas, recorridos y entrega de novedades. Consulte [la guía técnica](docs/manual-tecnico/fase-8-eventos-recorridos.md) y [el manual de usuario](docs/manual-usuario/fase-8.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
 
 ## Incluido
 
@@ -28,6 +28,10 @@ La Fase 7 incorpora visitas generadas por residentes, QR de entrada/salida, capt
 - Visitas con vigencia configurable, límite de QR activos, edición/cancelación previa y detección de duplicados.
 - Entrada y salida de visitantes con el mismo QR, fotografías directas de cámara y privacidad auditable.
 - Accesos de proveedores preautorizados o registrados por el vigilante sin QR.
+- Eventos con prioridad escalable, tipos configurables, comentarios supervisados y cancelación auditada.
+- Fotografías y videos de hasta 30 segundos capturados directamente, con almacenamiento privado y endpoint protegido.
+- Recorridos programados o libres, sin QR de ruta, con evidencia y observaciones obligatorias.
+- Novedad obligatoria antes del cierre y consulta de entregas anteriores en el punto.
 
 ## Requisitos
 
@@ -67,4 +71,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-Las Fases 1 a 7 están implementadas. Eventos, recorridos, supervisiones, notificaciones, reportes y Cron corresponden a las Fases 8 a 12.
+Las Fases 1 a 8 están implementadas. Supervisiones, notificaciones, reportes, auditoría, almacenamiento y Cron corresponden a las Fases 9 a 12.

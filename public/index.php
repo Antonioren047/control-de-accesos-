@@ -68,6 +68,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase5.css">
     <link rel="stylesheet" href="assets/css/phase6.css">
     <link rel="stylesheet" href="assets/css/phase7.css">
+    <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -89,7 +90,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 7 · Visitas y proveedores</div>
+        <div class="sidebar-foot">Fase 8 · Eventos y recorridos</div>
     </aside>
     <main>
         <header class="topbar">
@@ -140,6 +141,7 @@ $formatDate = static function (?string $value): string {
             $isPhaseFiveModule = in_array($moduleId, ['operacion','asistencias','mi_actividad'], true);
             $isPhaseSixModule = $moduleId === 'sincronizacion';
             $isPhaseSevenModule = in_array($moduleId, ['visitas','proveedores'], true);
+            $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -196,6 +198,17 @@ $formatDate = static function (?string $value): string {
                             <button class="ghost-button" type="button" data-phase7-refresh>Actualizar</button>
                         </div></div>
                         <div class="organization-content" data-phase7-content><article class="security-card"><p class="muted">Consultando accesos…</p></article></div>
+                    </section>
+                <?php elseif ($isPhaseEightModule): ?>
+                    <section class="phase8-workspace" data-phase8-module="<?= htmlspecialchars($moduleId) ?>"
+                        data-can-manage="<?= in_array('events.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-review="<?= in_array('events.review',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-round-review="<?= in_array('rounds.review',$profile['permissions'],true)?'1':'0' ?>">
+                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 8 activa</p><h3><?= $moduleId==='eventos'?'Eventos, evidencias y comentarios':'Seguimiento de recorridos' ?></h3></div><div class="organization-actions">
+                            <?php if($moduleId==='eventos' && in_array('events.manage',$profile['permissions'],true)): ?><button class="submit" type="button" data-phase8-types>Configurar tipos</button><?php endif; ?>
+                            <button class="ghost-button" type="button" data-phase8-refresh>Actualizar</button>
+                        </div></div>
+                        <div class="organization-content" data-phase8-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
                     </section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
@@ -287,7 +300,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 7 · Visitas y proveedores</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 8 · Eventos, evidencias, recorridos y novedades</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -310,11 +323,15 @@ $formatDate = static function (?string $value): string {
 <dialog class="organization-dialog phase7-dialog" id="phase7Dialog">
     <form method="dialog" id="phase7Form"><div class="card-heading"><div><p class="eyebrow">Fase 7</p><h2 id="phase7DialogTitle">Nuevo acceso</h2></div><button class="ghost-button" type="button" id="closePhase7Dialog">Cerrar</button></div><div class="organization-form-grid" id="phase7Fields"></div><div class="form-message" id="phase7Message" role="alert"></div><button class="submit" type="submit">Guardar y generar QR</button></form>
 </dialog>
+<dialog class="organization-dialog phase8-dialog" id="phase8Dialog">
+    <form method="dialog" id="phase8Form"><div class="card-heading"><div><p class="eyebrow">Fase 8</p><h2 id="phase8DialogTitle">Detalle</h2></div><button class="ghost-button" type="button" id="closePhase8Dialog">Cerrar</button></div><div id="phase8DialogBody"></div><div class="form-message" id="phase8Message" role="alert"></div></form>
+</dialog>
 <script type="module" src="assets/js/app.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
 <script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
+<script type="module" src="assets/js/phase8-panel.js?v=8.0.0"></script>
 </body>
 </html>
