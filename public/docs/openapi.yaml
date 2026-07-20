@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 11.0.0
-  description: Fase 11. Incluye reportes PDF, auditoría, almacenamiento y monitoreo Cron.
+  version: 12.0.0
+  description: Versión final. Integra operación, reportes, auditoría, almacenamiento, Cron y documentación por rol.
 servers:
   - url: /control-de-accesos/public/api
 paths:

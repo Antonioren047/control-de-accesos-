@@ -1,8 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 10** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Sistema completo de vigilancia y control de accesos con las **Fases 1 a 12** integradas. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
-La Fase 10 incorpora notificaciones internas y dashboards por rol. Consulte [la guía técnica](docs/manual-tecnico/fase-10-notificaciones-dashboards.md) y [el manual de usuario](docs/manual-usuario/fase-10.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
+La Fase 12 consolida la experiencia visual, accesibilidad, pruebas globales, documentación por rol y verificación de despliegue. La validación real de la Fase 6 offline permanece pendiente hasta publicar en un dominio HTTPS de cPanel.
 
 ## Incluido
 
@@ -40,6 +40,8 @@ La Fase 10 incorpora notificaciones internas y dashboards por rol. Consulte [la 
 - Avisos deduplicados de sesiones, retardos, eventos, recorridos, supervisiones y visitas.
 - Dashboard por rol con filtros de fecha, cliente, lugar y turno, actualizado cada minuto.
 - Indicadores restringidos por alcance también en el portal operativo del vigilante.
+- Reportes PDF, auditoría permanente, cuotas de almacenamiento y tareas Cron monitorizadas.
+- Integración visual final responsive, navegación accesible y procedimiento de publicación verificable.
 
 ## Requisitos
 
@@ -58,6 +60,7 @@ Abre http://localhost/control-de-accesos/public/install/. El asistente crea la b
     C:\xampp-8.1\php\php.exe scripts\migrate.php
     C:\xampp-8.1\php\php.exe scripts\seed.php
     C:\xampp-8.1\php\php.exe scripts\seed.php --demo
+    C:\xampp-8.1\php\php.exe scripts\release_check.php
     vendor\bin\phpunit
 
 ## Endpoints
@@ -79,4 +82,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-Las Fases 1 a 10 están implementadas. Reportes generales, auditoría, almacenamiento y Cron corresponden a las Fases 11 y 12.
+Las Fases 1 a 12 están implementadas. Consulta el [despliegue final](docs/manual-tecnico/despliegue-final.md), el [manual por rol](docs/manual-usuario/manual-final-por-rol.md) y el [checklist de cierre](docs/checklist-fase12.md).

@@ -33,3 +33,13 @@
 - [ ] El vigilante consulta comentarios y actividad desde su portal operativo, no desde el login web.
 - [ ] Los filtros de fecha, cliente, lugar y turno recalculan los indicadores.
 - [ ] El dashboard se actualiza automáticamente después de 60 segundos sin duplicar tarjetas.
+- [ ] Cada reporte respeta un rango máximo de 90 días y el alcance del usuario.
+- [ ] Los PDF incluyen folio, usuario generador, periodo, logotipo, paginación y evidencias disponibles.
+- [ ] El residente solo genera PDF de su propio historial de visitas y el vigilante no descarga reportes.
+- [ ] Auditoría muestra acción, módulo, registro, IP, dispositivo y cambios dentro del alcance.
+- [ ] La cuota de almacenamiento alerta al administrador sin bloquear nuevas evidencias.
+- [ ] Cron puede ejecutarse nuevamente sin duplicar faltas, alertas ni acciones de retención.
+- [ ] El aviso de retención aparece antes de eliminar y la eliminación queda auditada.
+- [ ] La interfaz no presenta desbordamiento horizontal en 390, 768 ni 1440 píxeles.
+- [ ] La navegación con teclado permite saltar al contenido y cerrar el menú móvil con Escape.
+- [ ] `scripts/release_check.php` termina sin errores antes de publicar.

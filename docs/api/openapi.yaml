@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 8.1.0
-  description: Contrato de autenticación y operación hasta la Fase 8, incluidos eventos, evidencias, recorridos y novedades.
+  version: 12.0.0
+  description: Contrato final de autenticación, operación, reportes, auditoría, almacenamiento y mantenimiento.
 servers:
   - url: /control-de-accesos/public/api
 paths:
@@ -215,6 +215,16 @@ paths:
     post: {summary: Marcar notificaciones del vigilante como leídas, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Lectura registrada}}}
   /guard/dashboard:
     get: {summary: Consultar actividad y métricas propias del vigilante, responses: {'200': {description: Indicadores propios}}}
+  /reports/catalog:
+    get: {summary: Consultar tipos, filtros e historial de reportes autorizados, responses: {'200': {description: Catálogo de reportes}}}
+  /reports:
+    post: {summary: Preparar reporte PDF con folio, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Reporte preparado}, '422': {description: Filtros inválidos}}}
+  /audit:
+    get: {summary: Consultar auditoría permanente dentro del alcance, responses: {'200': {description: Registros auditables}}}
+  /maintenance:
+    get: {summary: Consultar cuota de almacenamiento y estado Cron, responses: {'200': {description: Monitor técnico}}}
+  /maintenance/run:
+    post: {summary: Ejecutar mantenimiento idempotente, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Resultado por tarea}, '403': {description: Sin permiso}}}
 components:
   parameters:
     CsrfToken:

@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+$root=require dirname(__DIR__).'/bootstrap/app.php';
+use Vigilancia\Database\Connection;use Vigilancia\Support\Config;
+
+$checks=[];$add=static function(string$name,bool$ok,string$detail,bool$required=true)use(&$checks):void{$checks[]=['name'=>$name,'status'=>$ok?'ok':($required?'error':'warning'),'detail'=>$detail];};
+$add('PHP 8.1+',version_compare(PHP_VERSION,'8.1.0','>='),PHP_VERSION);
+foreach(['pdo_mysql','json','mbstring','fileinfo']as$extension)$add('Extensión '.$extension,extension_loaded($extension),extension_loaded($extension)?'Disponible':'No disponible');
+$add('Archivo .env',is_file($root.'/.env'),'Configuración localizada fuera de public');
+$add('Instalador bloqueado',is_file($root.'/storage/installed.lock'),'storage/installed.lock');
+foreach(['storage','storage/evidence','storage/logs','storage/cache','storage/temp']as$directory)$add('Escritura '.$directory,is_dir($root.'/'.$directory)&&is_writable($root.'/'.$directory),'Requerida para operación');
+foreach(['public/index.php','public/api/index.php','public/.htaccess','cron/run.php','vendor/autoload.php']as$file)$add('Archivo '.$file,is_file($root.'/'.$file),'Componente de publicación');
+$htaccess=(string)@file_get_contents($root.'/public/.htaccess');$add('Apache sin listado',str_contains($htaccess,'Options -Indexes'),'Directorio público protegido');$add('Cabeceras de seguridad',str_contains($htaccess,'Content-Security-Policy')&&str_contains($htaccess,'X-Content-Type-Options'),'CSP y nosniff configurados');
+$app=Config::app();$host=(string)(parse_url($app['url'],PHP_URL_HOST)??'');$isLocal=in_array($host,['localhost','127.0.0.1','::1'],true);if($app['env']==='production'){$add('Debug desactivado',!$app['debug'],'APP_DEBUG=false');$add('HTTPS de producción',$isLocal||str_starts_with($app['url'],'https://'),$isLocal?'HTTP permitido únicamente para localhost':'APP_URL debe utilizar HTTPS');}else{$add('Entorno local',true,'Las validaciones HTTPS y debug se exigirán en production',false);}
+try{$pdo=Connection::make(Config::database());$add('Conexión de base de datos',true,'Conexión PDO disponible');$migrations=(int)$pdo->query("SELECT COUNT(*) FROM migrations WHERE version='014_reports_audit_storage_cron'")->fetchColumn();$add('Esquema Fase 11',$migrations===1,'Migración final de datos aplicada');$roles=(int)$pdo->query("SELECT COUNT(*) FROM roles WHERE code IN ('superadmin','admin','supervisor','guard','resident')")->fetchColumn();$add('Cinco roles definitivos',$roles===5,"$roles roles localizados");$cron=(int)$pdo->query("SELECT COUNT(*) FROM cron_runs WHERE status='success'")->fetchColumn();$add('Cron verificado',$cron>0,$cron>0?'Existe una ejecución satisfactoria':'Se validará al configurar cPanel',false);}catch(Throwable$e){$add('Conexión de base de datos',false,'No fue posible consultar el esquema');}
+$errors=count(array_filter($checks,static fn(array$c):bool=>$c['status']==='error'));$warnings=count(array_filter($checks,static fn(array$c):bool=>$c['status']==='warning'));foreach($checks as$check)printf("[%s] %-30s %s\n",strtoupper($check['status']),$check['name'],$check['detail']);printf("\nResultado: %d errores, %d advertencias, %d verificaciones.\n",$errors,$warnings,count($checks));exit($errors?1:0);

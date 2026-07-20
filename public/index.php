@@ -72,8 +72,10 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase9.css?v=9.0.0">
     <link rel="stylesheet" href="assets/css/phase10.css?v=10.0.0">
     <link rel="stylesheet" href="assets/css/phase11.css?v=11.0.0">
+    <link rel="stylesheet" href="assets/css/phase12.css?v=12.0.0">
 </head>
 <body>
+<a class="skip-link" href="#mainContent">Saltar al contenido principal</a>
 <div class="app-shell">
     <aside class="sidebar" id="sidebar">
         <a class="brand" href="./">
@@ -93,9 +95,10 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 10 · Notificaciones y dashboards</div>
+        <div class="sidebar-foot">Sistema completo · Versión 12</div>
     </aside>
-    <main>
+    <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="Cerrar menÃº" tabindex="-1"></button>
+    <main id="mainContent" tabindex="-1">
         <header class="topbar">
             <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
             <div><p class="eyebrow" id="viewEyebrow">Acceso autenticado</p><h1 id="viewTitle">Panel principal</h1></div>
@@ -330,7 +333,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 10 · Notificaciones y dashboards</footer>
+        <footer>© 2026 Sistema de Vigilancia · Versión 12 · Integración final</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -360,7 +363,7 @@ $formatDate = static function (?string $value): string {
     <form method="dialog" id="phase9Form"><div class="card-heading"><div><p class="eyebrow">Fase 9</p><h2 id="phase9DialogTitle">Supervisión</h2></div><button class="ghost-button" type="button" id="closePhase9Dialog">Cerrar</button></div><div id="phase9DialogBody"></div><div class="form-message" id="phase9Message" role="alert"></div></form>
 </dialog>
 <dialog class="phase9-camera" id="phase9CameraDialog"><div><video id="phase9Video" autoplay playsinline muted></video><canvas id="phase9Canvas" hidden></canvas><div class="close-actions"><button class="submit" id="phase9Capture" type="button">Capturar fotografía</button><button class="ghost-button" id="phase9CloseCamera" type="button">Cancelar</button></div></div></dialog>
-<script type="module" src="assets/js/app.js?v=4.0.2"></script>
+<script type="module" src="assets/js/app.js?v=12.0.0"></script>
 <script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
@@ -370,5 +373,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase9-panel.js?v=9.0.0"></script>
 <script type="module" src="assets/js/phase10.js?v=10.0.0"></script>
 <script type="module" src="assets/js/phase11.js?v=11.0.0"></script>
+<script type="module" src="assets/js/phase12.js?v=12.0.0"></script>
 </body>
 </html>

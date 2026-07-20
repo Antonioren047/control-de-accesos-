@@ -85,7 +85,7 @@ $maintenanceController = new MaintenanceController($auth,new MaintenanceService(
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '11.0.0',
+    'version' => '12.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);

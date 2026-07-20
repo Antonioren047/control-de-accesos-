@@ -29,9 +29,18 @@ initTheme(async theme => {
 });
 
 const sidebar = document.querySelector('#sidebar');
+const sidebarBackdrop = document.querySelector('#sidebarBackdrop');
 document.querySelector('#collapse')?.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-document.querySelector('#mobileMenu')?.addEventListener('click', () => sidebar.classList.toggle('open'));
-document.addEventListener('keydown', event => { if (event.key === 'Escape') sidebar?.classList.remove('open'); });
+function setMobileMenu(open) {
+    sidebar?.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
+    document.querySelector('#mobileMenu')?.setAttribute('aria-expanded', String(open));
+}
+document.querySelector('#mobileMenu')?.setAttribute('aria-controls', 'sidebar');
+document.querySelector('#mobileMenu')?.setAttribute('aria-expanded', 'false');
+document.querySelector('#mobileMenu')?.addEventListener('click', () => setMobileMenu(!sidebar?.classList.contains('open')));
+sidebarBackdrop?.addEventListener('click', () => setMobileMenu(false));
+document.addEventListener('keydown', event => { if (event.key === 'Escape') setMobileMenu(false); });
 
 const viewMeta = {
     inicio: ['Acceso autenticado', 'Panel principal'],
@@ -56,7 +65,7 @@ function activateView(requested, updateHash = true) {
     const titleNode = document.querySelector('#viewTitle');
     if (eyebrowNode) eyebrowNode.textContent = eyebrow;
     if (titleNode) titleNode.textContent = title;
-    sidebar?.classList.remove('open');
+    setMobileMenu(false);
     if (updateHash && location.hash !== `#${view}`) history.replaceState(null, '', `#${view}`);
     if (view === 'seguridad') loadSessions();
     if (view === 'permisos') loadPermissionMatrix();
