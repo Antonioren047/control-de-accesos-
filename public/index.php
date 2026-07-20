@@ -70,6 +70,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase7.css">
     <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.2">
     <link rel="stylesheet" href="assets/css/phase9.css?v=9.0.0">
+    <link rel="stylesheet" href="assets/css/phase10.css?v=10.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -91,7 +92,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 9 · Supervisiones</div>
+        <div class="sidebar-foot">Fase 10 · Notificaciones y dashboards</div>
     </aside>
     <main>
         <header class="topbar">
@@ -99,6 +100,10 @@ $formatDate = static function (?string $value): string {
             <div><p class="eyebrow" id="viewEyebrow">Acceso autenticado</p><h1 id="viewTitle">Panel principal</h1></div>
             <div class="top-actions">
                 <span class="connection"><i></i>Sesión activa</span>
+                <div class="notification-center">
+                    <button class="notification-button" id="notificationButton" type="button" aria-label="Abrir notificaciones" aria-expanded="false">♢<span id="notificationBadge" hidden>0</span></button>
+                    <div class="notification-dropdown" id="notificationDropdown" hidden><div class="notification-dropdown-head"><strong>Notificaciones</strong><button type="button" id="readAllNotifications">Marcar todas</button></div><div id="notificationPreview"><p class="muted">Consultando…</p></div><a href="#notificaciones" data-view-target="notificaciones">Ver más</a></div>
+                </div>
                 <label class="theme-control">Tema
                     <select id="themeSelect" aria-label="Tema">
                         <option value="auto">Automático</option><option value="light">Claro</option><option value="dark">Oscuro</option>
@@ -133,6 +138,11 @@ $formatDate = static function (?string $value): string {
                 <article class="status-card"><span class="card-icon">◇</span><div><small>ROL BASE</small><h3><?= htmlspecialchars($profile['role']['name']) ?></h3><p><?= htmlspecialchars($profile['company']['name']) ?></p></div><span class="badge neutral"><?= count($profile['permissions']) ?> permisos</span></article>
                 <article class="status-card"><span class="card-icon">▦</span><div><small>MÓDULOS</small><h3><?= count($availableModules) ?> autorizados</h3><p>Visibles según tu rol y permisos efectivos</p></div><span class="badge success">Restringidos</span></article>
             </section>
+            <section class="phase10-dashboard" id="roleDashboard">
+                <div class="section-head"><div><p class="eyebrow">DASHBOARD POR ROL</p><h2>Indicadores de operación</h2></div><small id="dashboardUpdated">Consultando…</small></div>
+                <div class="dashboard-filters"><label>Fecha<input type="date" id="dashboardDate" value="<?= gmdate('Y-m-d') ?>"></label><label>Cliente<select id="dashboardClient"><option value="">Todos</option></select></label><label>Lugar<select id="dashboardLocation"><option value="">Todos</option></select></label><label>Turno<select id="dashboardShift"><option value="">Todos</option></select></label><button class="ghost-button" id="dashboardRefresh" type="button">Actualizar</button></div>
+                <div class="dashboard-metrics" id="dashboardMetrics"><article class="security-card"><p class="muted">Calculando indicadores…</p></article></div>
+            </section>
         </section>
 
         <?php foreach ($availableModules as $moduleId => $module):
@@ -144,6 +154,7 @@ $formatDate = static function (?string $value): string {
             $isPhaseSevenModule = in_array($moduleId, ['visitas','proveedores'], true);
             $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
             $isPhaseNineModule = $moduleId === 'supervisiones';
+            $isPhaseTenModule = $moduleId === 'notificaciones';
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -220,6 +231,8 @@ $formatDate = static function (?string $value): string {
                         </div></div>
                         <div class="organization-content" data-phase9-content><article class="security-card"><p class="muted">Consultando supervisiones…</p></article></div>
                     </section>
+                <?php elseif ($isPhaseTenModule): ?>
+                    <section class="phase10-workspace" data-phase10-module="notificaciones"><div class="organization-toolbar"><div><p class="eyebrow">Fase 10 activa</p><h3>Centro de notificaciones</h3></div><div class="organization-actions"><button class="ghost-button" type="button" data-notifications-read-all>Marcar todas como leídas</button><button class="ghost-button" type="button" data-notifications-refresh>Actualizar</button></div></div><div class="notification-panel" data-notification-panel><p class="muted">Consultando notificaciones…</p></div></section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
                         <div><p class="eyebrow">Acceso concedido</p><h3>Módulo disponible para <?= htmlspecialchars($profile['role']['name']) ?></h3></div>
@@ -310,7 +323,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 9 · Supervisiones</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 10 · Notificaciones y dashboards</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -348,5 +361,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
 <script type="module" src="assets/js/phase8-panel.js?v=8.1.0"></script>
 <script type="module" src="assets/js/phase9-panel.js?v=9.0.0"></script>
+<script type="module" src="assets/js/phase10.js?v=10.0.0"></script>
 </body>
 </html>

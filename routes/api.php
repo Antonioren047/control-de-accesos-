@@ -12,6 +12,7 @@ use Vigilancia\Controllers\OfflineController;
 use Vigilancia\Controllers\AccessController;
 use Vigilancia\Controllers\EventController;
 use Vigilancia\Controllers\SupervisionController;
+use Vigilancia\Controllers\NotificationController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -38,6 +39,8 @@ use Vigilancia\Services\EventEvidenceService;
 use Vigilancia\Repositories\SupervisionRepository;
 use Vigilancia\Services\SupervisionService;
 use Vigilancia\Services\SupervisionEvidenceService;
+use Vigilancia\Repositories\NotificationRepository;
+use Vigilancia\Services\NotificationService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -64,10 +67,11 @@ $offlineController = new OfflineController($auth,new OfflineService($pdo,new Off
 $accessController = new AccessController($auth,new AccessService($pdo,new AccessRepository($pdo),new OperationalRepository($pdo),new AccessAssetService($root),new SecurityLogRepository($pdo)));
 $eventController = new EventController($auth,new EventService($pdo,new EventRepository($pdo),new OperationalRepository($pdo),new EventEvidenceService($root),new SecurityLogRepository($pdo)));
 $supervisionController = new SupervisionController($auth,new SupervisionService($pdo,new SupervisionRepository($pdo),new SupervisionEvidenceService($root),new SecurityLogRepository($pdo)));
+$notificationController = new NotificationController($auth,new NotificationService(new NotificationRepository($pdo),new PermissionRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '9.0.0',
+    'version' => '10.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -138,3 +142,9 @@ $router->post('/supervisions/evidence', [$supervisionController, 'evidence']);
 $router->post('/supervisions/finish', [$supervisionController, 'finish']);
 $router->post('/supervisions/comment', [$supervisionController, 'comment']);
 $router->post('/supervisions/pin', [$supervisionController, 'pin']);
+$router->get('/notifications', [$notificationController, 'notifications']);
+$router->post('/notifications/read', [$notificationController, 'read']);
+$router->get('/dashboard', [$notificationController, 'dashboard']);
+$router->get('/guard/notifications', [$notificationController, 'guardNotifications']);
+$router->post('/guard/notifications/read', [$notificationController, 'guardRead']);
+$router->get('/guard/dashboard', [$notificationController, 'guardDashboard']);

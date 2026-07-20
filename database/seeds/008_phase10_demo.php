@@ -1,0 +1,3 @@
+<?php
+declare(strict_types=1);
+return static function(PDO$pdo,bool$demo=false):void{if(!$demo)return;$users=$pdo->query("SELECT id FROM users WHERE is_active=1")->fetchAll(PDO::FETCH_COLUMN);$s=$pdo->prepare("INSERT IGNORE INTO notifications(user_id,notification_type,title,message,priority,related_type,related_id,related_view,location_id,deduplication_key,created_at,expires_at) VALUES(?,'system','Centro de notificaciones activo','La Fase 10 está disponible para esta cuenta.','normal','system',NULL,'inicio',NULL,?,UTC_TIMESTAMP(),DATE_ADD(UTC_TIMESTAMP(),INTERVAL 12 MONTH))");foreach($users as$id)$s->execute([$id,hash('sha256','phase10-welcome-'.$id)]);};

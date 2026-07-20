@@ -25,3 +25,11 @@
 - [ ] Si el responsable está ausente, el sistema exige un motivo de al menos 10 caracteres.
 - [ ] Una supervisión finalizada no admite cambios ni evidencias, pero sí comentarios adicionales.
 - [ ] El PDF abre con folio, alcance, observaciones, evidencias y ambas confirmaciones.
+- [ ] El icono de notificaciones muestra el número de no leídas y despliega las últimas diez.
+- [ ] Una notificación abre únicamente un módulo autorizado y queda marcada como leída.
+- [ ] “Marcar todas” limpia el badge y el panel ampliado conserva el historial.
+- [ ] Administrador y supervisor solo observan alertas y métricas de sus lugares autorizados.
+- [ ] El residente recibe avisos de sus visitas y no ve métricas operativas de otros usuarios.
+- [ ] El vigilante consulta comentarios y actividad desde su portal operativo, no desde el login web.
+- [ ] Los filtros de fecha, cliente, lugar y turno recalculan los indicadores.
+- [ ] El dashboard se actualiza automáticamente después de 60 segundos sin duplicar tarjetas.

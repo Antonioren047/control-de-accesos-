@@ -61,4 +61,10 @@ final class ModuleConfigTest extends TestCase
         self::assertNotContains('supervisions.schedule',$roles['supervisor']);
         self::assertNotContains('supervisions.manage',$roles['guard']);
     }
+
+    public function testTodosLosRolesRecibenDashboardYNotificacionesPropias():void
+    {
+        $roles=(require dirname(__DIR__,2).'/config/modules.php')['roles'];
+        foreach(['admin','supervisor','guard','resident'] as $role){self::assertContains('notifications.view',$roles[$role]);self::assertContains('dashboards.view',$roles[$role]);}
+    }
 }

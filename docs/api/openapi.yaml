@@ -203,6 +203,18 @@ paths:
     post: {summary: Finalizar con observaciones y doble confirmación por nombre y PIN, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Supervisión finalizada y URL de PDF}, '422': {description: Confirmación o motivo inválido}}}
   /supervisions/comment:
     post: {summary: Agregar comentario inmutable incluso después de finalizar, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Comentario registrado}}}
+  /notifications:
+    get: {summary: Consultar las últimas diez o todas las notificaciones propias, responses: {'200': {description: Notificaciones y contador no leído}}}
+  /notifications/read:
+    post: {summary: Marcar una o todas las notificaciones como leídas, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Lectura registrada}}}
+  /dashboard:
+    get: {summary: Obtener indicadores por rol y alcance con filtros, responses: {'200': {description: Métricas, catálogos y hora de actualización}}}
+  /guard/notifications:
+    get: {summary: Consultar notificaciones dentro de la sesión operativa del vigilante, responses: {'200': {description: Notificaciones propias}}}
+  /guard/notifications/read:
+    post: {summary: Marcar notificaciones del vigilante como leídas, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Lectura registrada}}}
+  /guard/dashboard:
+    get: {summary: Consultar actividad y métricas propias del vigilante, responses: {'200': {description: Indicadores propios}}}
 components:
   parameters:
     CsrfToken:

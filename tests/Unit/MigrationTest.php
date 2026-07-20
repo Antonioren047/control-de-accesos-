@@ -21,5 +21,6 @@ final class MigrationTest extends TestCase
         self::assertIsCallable(require $root . '010_events_rounds_novelties.php');
         self::assertIsCallable(require $root . '011_incident_event_fields.php');
         self::assertIsCallable(require $root . '012_supervisions.php');
+        self::assertIsCallable(require $root . '013_notifications_dashboards.php');
     }
 }

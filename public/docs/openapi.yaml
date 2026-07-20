@@ -123,3 +123,15 @@ paths:
     post: {summary: Finalizar con doble confirmación por nombre y PIN, responses: {'200': {description: Supervisión finalizada}, '422': {description: Confirmación inválida}}}
   /supervisions/comment:
     post: {summary: Agregar comentario inmutable, responses: {'201': {description: Comentario registrado}}}
+  /notifications:
+    get: {summary: Consultar notificaciones propias, responses: {'200': {description: Notificaciones y contador}}}
+  /notifications/read:
+    post: {summary: Marcar una o todas como leídas, responses: {'200': {description: Lectura registrada}}}
+  /dashboard:
+    get: {summary: Consultar dashboard por rol y alcance, responses: {'200': {description: Indicadores filtrados}}}
+  /guard/notifications:
+    get: {summary: Consultar notificaciones del vigilante, responses: {'200': {description: Notificaciones propias}}}
+  /guard/notifications/read:
+    post: {summary: Marcar notificaciones del vigilante, responses: {'200': {description: Lectura registrada}}}
+  /guard/dashboard:
+    get: {summary: Consultar dashboard del vigilante, responses: {'200': {description: Indicadores propios}}}
