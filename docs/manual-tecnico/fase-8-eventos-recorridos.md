@@ -2,13 +2,15 @@
 
 ## Modelo y permisos
 
-La migración `010_events_rounds_novelties` crea tipos configurables, eventos, comentarios, evidencias, políticas de recorrido, recorridos y novedades. `events.create` y `rounds.execute` pertenecen al vigilante; `events.review` y `rounds.review` al supervisor; `events.manage` y `rounds.view` al administrador. El backend vuelve a comprobar alcance y permiso en cada operación.
+La migración `010_events_rounds_novelties` crea eventos, comentarios, evidencias, políticas, recorridos y novedades. `011_incident_event_fields` separa los tipos de incidencia de los eventos internos y agrega un título obligatorio. `events.create` y `rounds.execute` pertenecen al vigilante; `events.review` y `rounds.review` al supervisor; `events.manage` y `rounds.view` al administrador. El backend vuelve a comprobar alcance y permiso en cada operación.
 
 ## Reglas protegidas en servidor
 
-- La descripción de un evento contiene entre 10 y 2000 caracteres.
+- El módulo Incidencias solo muestra tipos con alcance `incident`; visitas, proveedores, recorridos y novedades usan eventos internos invisibles en ese selector.
+- El título contiene entre 5 y 180 caracteres y el comentario inicial entre 10 y 2000.
 - La prioridad del vigilante nunca puede ser inferior a la predeterminada del tipo.
-- Un evento enviado no se edita ni elimina. La cancelación conserva evento y evidencia, exige motivo y deja auditoría.
+- Una incidencia enviada no se edita ni elimina. La cancelación conserva incidencia y evidencia, exige motivo y deja auditoría.
+- Creación, carga posterior de evidencia, comentarios y cancelación registran actor, fecha, IP, agente y contexto en el registro de seguridad.
 - Los comentarios son anexos inmutables de supervisores autorizados.
 - Cada evento admite hasta 10 evidencias y 20 MB totales. Se valida el MIME real.
 - Los archivos viven en `storage/events`, fuera de `public`, y se sirven por `event-evidence.php` después de comprobar sesión y alcance.

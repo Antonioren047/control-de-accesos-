@@ -62,7 +62,7 @@ $eventController = new EventController($auth,new EventService($pdo,new EventRepo
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '8.0.0',
+    'version' => '8.1.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);

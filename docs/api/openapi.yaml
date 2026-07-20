@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: API del Sistema de Vigilancia
-  version: 8.0.0
+  version: 8.1.0
   description: Contrato de autenticación y operación hasta la Fase 8, incluidos eventos, evidencias, recorridos y novedades.
 servers:
   - url: /control-de-accesos/public/api
@@ -170,7 +170,7 @@ paths:
     post: {summary: Crear o configurar un tipo de evento, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Tipo guardado}, '403': {description: Sin permiso}}}
   /events:
     get: {summary: Consultar eventos dentro del alcance, responses: {'200': {description: Eventos autorizados}}}
-    post: {summary: Registrar evento desde una sesión operativa, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Evento registrado}, '422': {description: Descripción o evidencia inválida}}}
+    post: {summary: Registrar incidencia con tipo, título, comentario y evidencia, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Incidencia auditable registrada}, '422': {description: Datos o evidencia inválidos}}}
   /events/evidence:
     post: {summary: Agregar una evidencia capturada, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Evidencia privada guardada}, '409': {description: Límite alcanzado}}}
   /events/comment:

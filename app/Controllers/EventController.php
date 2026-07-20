@@ -9,7 +9,7 @@ final class EventController
  public function saveType(Request$r):void{$this->csrf($r);JsonResponse::success('Tipo de evento guardado.',$this->service->saveType($this->auth->current(),$r->body));}
  public function events():void{JsonResponse::success('Eventos dentro del alcance.',['items'=>$this->service->events($this->auth->current())]);}
  public function details(Request$r):void{JsonResponse::success('Detalle del evento.',$this->service->details($this->auth->current(),(int)($r->query['id']??0)));}
- public function create(Request$r):void{$this->csrf($r);JsonResponse::success('Evento registrado.',$this->service->createGuardEvent($r->body),201);}
+ public function create(Request$r):void{$this->csrf($r);JsonResponse::success('Incidencia registrada.',$this->service->createGuardEvent($r->body),201);}
  public function evidence(Request$r):void{$this->csrf($r);JsonResponse::success('Evidencia agregada.',$this->service->addEvidence($r->body),201);}
  public function comment(Request$r):void{$this->csrf($r);JsonResponse::success('Comentario registrado.',$this->service->comment($this->auth->current(),$r->body),201);}
  public function cancel(Request$r):void{$this->csrf($r);JsonResponse::success('Evento cancelado.',$this->service->cancel($this->auth->current(),$r->body));}

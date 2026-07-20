@@ -19,5 +19,6 @@ final class MigrationTest extends TestCase
         self::assertIsCallable(require $root . '008_offline_sync.php');
         self::assertIsCallable(require $root . '009_visitors_providers.php');
         self::assertIsCallable(require $root . '010_events_rounds_novelties.php');
+        self::assertIsCallable(require $root . '011_incident_event_fields.php');
     }
 }

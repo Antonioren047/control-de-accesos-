@@ -204,8 +204,8 @@ $formatDate = static function (?string $value): string {
                         data-can-manage="<?= in_array('events.manage',$profile['permissions'],true)?'1':'0' ?>"
                         data-can-review="<?= in_array('events.review',$profile['permissions'],true)?'1':'0' ?>"
                         data-can-round-review="<?= in_array('rounds.review',$profile['permissions'],true)?'1':'0' ?>">
-                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 8 activa</p><h3><?= $moduleId==='eventos'?'Eventos, evidencias y comentarios':'Seguimiento de recorridos' ?></h3></div><div class="organization-actions">
-                            <?php if($moduleId==='eventos' && in_array('events.manage',$profile['permissions'],true)): ?><button class="submit" type="button" data-phase8-types>Configurar tipos</button><?php endif; ?>
+                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 8 activa</p><h3><?= $moduleId==='eventos'?'Incidencias, evidencias y comentarios':'Seguimiento de recorridos' ?></h3></div><div class="organization-actions">
+                            <?php if($moduleId==='eventos' && in_array('events.manage',$profile['permissions'],true)): ?><button class="submit" type="button" data-phase8-types>Tipos de incidencia</button><?php endif; ?>
                             <button class="ghost-button" type="button" data-phase8-refresh>Actualizar</button>
                         </div></div>
                         <div class="organization-content" data-phase8-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
@@ -332,6 +332,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
 <script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
-<script type="module" src="assets/js/phase8-panel.js?v=8.0.2"></script>
+<script type="module" src="assets/js/phase8-panel.js?v=8.1.0"></script>
 </body>
 </html>

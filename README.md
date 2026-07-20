@@ -28,7 +28,7 @@ La Fase 8 incorpora eventos inmutables, evidencias privadas, recorridos y entreg
 - Visitas con vigencia configurable, límite de QR activos, edición/cancelación previa y detección de duplicados.
 - Entrada y salida de visitantes con el mismo QR, fotografías directas de cámara y privacidad auditable.
 - Accesos de proveedores preautorizados o registrados por el vigilante sin QR.
-- Eventos con prioridad escalable, tipos configurables, comentarios supervisados y cancelación auditada.
+- Incidencias con tipo configurable, título, comentario inicial, prioridad escalable, evidencias y cancelación auditada.
 - Fotografías y videos de hasta 30 segundos capturados directamente, con almacenamiento privado y endpoint protegido.
 - Recorridos programados o libres, sin QR de ruta, con evidencia y observaciones obligatorias.
 - Novedad obligatoria antes del cierre y consulta de entregas anteriores en el punto.
