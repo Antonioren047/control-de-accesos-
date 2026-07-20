@@ -17,3 +17,11 @@
 - [ ] Un recorrido excedido aparece incompleto y exige comentario para el cierre supervisor.
 - [ ] El cierre normal del turno se bloquea hasta registrar la novedad.
 - [ ] El vigilante entrante consulta las últimas novedades del mismo punto.
+- [ ] Administrador y superadministrador pueden programar supervisiones; el supervisor no puede programarlas.
+- [ ] El supervisor inicia una supervisión manual o pendiente únicamente dentro de sus lugares asignados.
+- [ ] El detalle muestra vigilantes presentes, eventos y recorridos recientes del lugar.
+- [ ] La cámara captura evidencia sin ofrecer selección desde la galería.
+- [ ] La finalización rechaza observaciones cortas, PIN incorrecto o responsable sin confirmación.
+- [ ] Si el responsable está ausente, el sistema exige un motivo de al menos 10 caracteres.
+- [ ] Una supervisión finalizada no admite cambios ni evidencias, pero sí comentarios adicionales.
+- [ ] El PDF abre con folio, alcance, observaciones, evidencias y ambas confirmaciones.

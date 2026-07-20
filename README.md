@@ -1,8 +1,8 @@
 # Sistema de Vigilancia — Control de Accesos
 
-Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 8** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
+Base técnica, autenticación, organización multiempresa, personal y operación de las **Fases 1 a 9** para una plataforma de vigilancia. PHP 8.1+, MySQL/MariaDB, HTML5, CSS3 y JavaScript vanilla; sin frameworks, Node, npm ni compilación.
 
-La Fase 8 incorpora eventos inmutables, evidencias privadas, recorridos y entrega de novedades. Consulte [la guía técnica](docs/manual-tecnico/fase-8-eventos-recorridos.md) y [el manual de usuario](docs/manual-usuario/fase-8.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
+La Fase 9 incorpora programación, ejecución, confirmación y reportes PDF de supervisiones. Consulte [la guía técnica](docs/manual-tecnico/fase-9-supervisiones.md) y [el manual de usuario](docs/manual-usuario/fase-9.md). La validación en cPanel de la Fase 6 permanece pendiente por decisión operativa.
 
 ## Incluido
 
@@ -32,6 +32,10 @@ La Fase 8 incorpora eventos inmutables, evidencias privadas, recorridos y entreg
 - Fotografías y videos de hasta 30 segundos capturados directamente, con almacenamiento privado y endpoint protegido.
 - Recorridos programados o libres, sin QR de ruta, con evidencia y observaciones obligatorias.
 - Novedad obligatoria antes del cierre y consulta de entregas anteriores en el punto.
+- Supervisiones manuales, por turno, diarias, semanales o mensuales sobre uno o varios puntos.
+- Consulta contextual del vigilante presente, eventos y recorridos durante la supervisión.
+- Evidencia fotográfica privada, doble confirmación por nombre y PIN y motivo de ausencia obligatorio.
+- Supervisiones finalizadas inmutables, comentarios posteriores y PDF protegido con folio auditable.
 
 ## Requisitos
 
@@ -71,4 +75,4 @@ app contiene capas; bootstrap inicia la aplicación; config expone configuració
 
 ## Alcance
 
-Las Fases 1 a 8 están implementadas. Supervisiones, notificaciones, reportes, auditoría, almacenamiento y Cron corresponden a las Fases 9 a 12.
+Las Fases 1 a 9 están implementadas. Notificaciones, dashboards, reportes generales, auditoría, almacenamiento y Cron corresponden a las Fases 10 a 12.

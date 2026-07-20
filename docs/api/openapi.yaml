@@ -187,6 +187,22 @@ paths:
     post: {summary: Cerrar recorrido por supervisión, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Cierre auditado}}}
   /shift-novelties:
     post: {summary: Registrar entrega de turno, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Novedad registrada}, '409': {description: Ya registrada}}}
+  /supervisions/catalog:
+    get: {summary: Consultar lugares, puntos y programaciones autorizadas, responses: {'200': {description: Catálogo dentro del alcance}, '403': {description: Sin permiso}}}
+  /supervisions:
+    get: {summary: Listar supervisiones dentro del alcance, responses: {'200': {description: Supervisiones autorizadas}}}
+  /supervisions/detail:
+    get: {summary: Consultar supervisión, vigilantes presentes, eventos, recorridos, evidencias y comentarios, responses: {'200': {description: Detalle auditable}, '404': {description: Fuera de alcance}}}
+  /supervisions/schedule:
+    post: {summary: Programar supervisión manual, por turno, diaria, semanal o mensual, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Programación creada}, '403': {description: Requiere supervisions.schedule}}}
+  /supervisions/start:
+    post: {summary: Iniciar supervisión programada o manual, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Supervisión iniciada}}}
+  /supervisions/evidence:
+    post: {summary: Adjuntar fotografía capturada durante la supervisión, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Evidencia privada guardada}}}
+  /supervisions/finish:
+    post: {summary: Finalizar con observaciones y doble confirmación por nombre y PIN, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'200': {description: Supervisión finalizada y URL de PDF}, '422': {description: Confirmación o motivo inválido}}}
+  /supervisions/comment:
+    post: {summary: Agregar comentario inmutable incluso después de finalizar, parameters: [{$ref: '#/components/parameters/CsrfToken'}], responses: {'201': {description: Comentario registrado}}}
 components:
   parameters:
     CsrfToken:

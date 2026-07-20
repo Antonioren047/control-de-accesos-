@@ -51,4 +51,14 @@ final class ModuleConfigTest extends TestCase
         self::assertNotContains('access_identifications.view', $roles['guard']);
         self::assertContains('access_identifications.view', $roles['supervisor']);
     }
+
+    public function testSupervisionesSeparanProgramacionYEjecucion(): void
+    {
+        $roles=(require dirname(__DIR__,2).'/config/modules.php')['roles'];
+        self::assertContains('supervisions.schedule',$roles['admin']);
+        self::assertContains('supervisions.manage',$roles['admin']);
+        self::assertContains('supervisions.manage',$roles['supervisor']);
+        self::assertNotContains('supervisions.schedule',$roles['supervisor']);
+        self::assertNotContains('supervisions.manage',$roles['guard']);
+    }
 }

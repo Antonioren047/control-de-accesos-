@@ -107,3 +107,19 @@ paths:
     post: {summary: Cerrar recorrido por supervisión, responses: {'200': {description: Cierre registrado}}}
   /shift-novelties:
     post: {summary: Registrar entrega de turno, responses: {'201': {description: Novedad registrada}}}
+  /supervisions/catalog:
+    get: {summary: Consultar catálogo autorizado de supervisiones, responses: {'200': {description: Lugares, puntos y programaciones}}}
+  /supervisions:
+    get: {summary: Listar supervisiones dentro del alcance, responses: {'200': {description: Supervisiones autorizadas}}}
+  /supervisions/detail:
+    get: {summary: Consultar detalle auditable, responses: {'200': {description: Detalle completo}, '404': {description: Fuera de alcance}}}
+  /supervisions/schedule:
+    post: {summary: Programar una supervisión, responses: {'201': {description: Programación creada}, '403': {description: Sin permiso}}}
+  /supervisions/start:
+    post: {summary: Iniciar supervisión programada o manual, responses: {'201': {description: Supervisión iniciada}}}
+  /supervisions/evidence:
+    post: {summary: Adjuntar fotografía capturada, responses: {'201': {description: Evidencia guardada}}}
+  /supervisions/finish:
+    post: {summary: Finalizar con doble confirmación por nombre y PIN, responses: {'200': {description: Supervisión finalizada}, '422': {description: Confirmación inválida}}}
+  /supervisions/comment:
+    post: {summary: Agregar comentario inmutable, responses: {'201': {description: Comentario registrado}}}

@@ -11,6 +11,7 @@ use Vigilancia\Controllers\OperationalController;
 use Vigilancia\Controllers\OfflineController;
 use Vigilancia\Controllers\AccessController;
 use Vigilancia\Controllers\EventController;
+use Vigilancia\Controllers\SupervisionController;
 use Vigilancia\Database\Connection;
 use Vigilancia\Http\JsonResponse;
 use Vigilancia\Services\AuthService;
@@ -34,6 +35,9 @@ use Vigilancia\Services\AccessAssetService;
 use Vigilancia\Repositories\EventRepository;
 use Vigilancia\Services\EventService;
 use Vigilancia\Services\EventEvidenceService;
+use Vigilancia\Repositories\SupervisionRepository;
+use Vigilancia\Services\SupervisionService;
+use Vigilancia\Services\SupervisionEvidenceService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
@@ -59,10 +63,11 @@ $operationalController = new OperationalController(
 $offlineController = new OfflineController($auth,new OfflineService($pdo,new OfflineRepository($pdo),new OfflineEvidenceService($root),new SecurityLogRepository($pdo),new OperationalRepository($pdo)));
 $accessController = new AccessController($auth,new AccessService($pdo,new AccessRepository($pdo),new OperationalRepository($pdo),new AccessAssetService($root),new SecurityLogRepository($pdo)));
 $eventController = new EventController($auth,new EventService($pdo,new EventRepository($pdo),new OperationalRepository($pdo),new EventEvidenceService($root),new SecurityLogRepository($pdo)));
+$supervisionController = new SupervisionController($auth,new SupervisionService($pdo,new SupervisionRepository($pdo),new SupervisionEvidenceService($root),new SecurityLogRepository($pdo)));
 
 $router->get('/health', new HealthController());
 $router->get('/', static fn () => JsonResponse::success('API de Control de Accesos', [
-    'version' => '8.1.0',
+    'version' => '9.0.0',
     'documentation' => '../docs/',
 ]));
 $router->post('/auth/login', [$authController, 'login']);
@@ -124,3 +129,12 @@ $router->post('/rounds/finish', [$eventController, 'finishRound']);
 $router->get('/rounds', [$eventController, 'rounds']);
 $router->post('/rounds/close', [$eventController, 'closeRound']);
 $router->post('/shift-novelties', [$eventController, 'novelty']);
+$router->get('/supervisions/catalog', [$supervisionController, 'catalog']);
+$router->get('/supervisions', [$supervisionController, 'lists']);
+$router->get('/supervisions/detail', [$supervisionController, 'detail']);
+$router->post('/supervisions/schedule', [$supervisionController, 'schedule']);
+$router->post('/supervisions/start', [$supervisionController, 'start']);
+$router->post('/supervisions/evidence', [$supervisionController, 'evidence']);
+$router->post('/supervisions/finish', [$supervisionController, 'finish']);
+$router->post('/supervisions/comment', [$supervisionController, 'comment']);
+$router->post('/supervisions/pin', [$supervisionController, 'pin']);

@@ -69,6 +69,7 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase6.css">
     <link rel="stylesheet" href="assets/css/phase7.css">
     <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.2">
+    <link rel="stylesheet" href="assets/css/phase9.css?v=9.0.0">
 </head>
 <body>
 <div class="app-shell">
@@ -90,7 +91,7 @@ $formatDate = static function (?string $value): string {
             <?php if ($canViewApi): ?><a href="docs/"><span aria-hidden="true">▤</span><span>API</span></a><?php endif; ?>
         </nav>
         <button class="collapse" id="collapse" type="button" aria-label="Colapsar menú">‹</button>
-        <div class="sidebar-foot">Fase 8 · Eventos y recorridos</div>
+        <div class="sidebar-foot">Fase 9 · Supervisiones</div>
     </aside>
     <main>
         <header class="topbar">
@@ -142,6 +143,7 @@ $formatDate = static function (?string $value): string {
             $isPhaseSixModule = $moduleId === 'sincronizacion';
             $isPhaseSevenModule = in_array($moduleId, ['visitas','proveedores'], true);
             $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
+            $isPhaseNineModule = $moduleId === 'supervisiones';
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -209,6 +211,14 @@ $formatDate = static function (?string $value): string {
                             <button class="ghost-button" type="button" data-phase8-refresh>Actualizar</button>
                         </div></div>
                         <div class="organization-content" data-phase8-content><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
+                    </section>
+                <?php elseif ($isPhaseNineModule): ?>
+                    <section class="phase9-workspace" data-phase9-module="supervisiones" data-can-schedule="<?= in_array('supervisions.schedule',$profile['permissions'],true)?'1':'0' ?>">
+                        <div class="organization-toolbar"><div><p class="eyebrow">Fase 9 activa</p><h3>Programación y ejecución de supervisiones</h3></div><div class="organization-actions">
+                            <?php if(in_array('supervisions.schedule',$profile['permissions'],true)): ?><button class="ghost-button" type="button" data-phase9-schedule>Programar</button><?php endif; ?>
+                            <button class="ghost-button" type="button" data-phase9-pin>Configurar PIN</button><button class="submit" type="button" data-phase9-start>Iniciar manual</button><button class="ghost-button" type="button" data-phase9-refresh>Actualizar</button>
+                        </div></div>
+                        <div class="organization-content" data-phase9-content><article class="security-card"><p class="muted">Consultando supervisiones…</p></article></div>
                     </section>
                 <?php else: ?><section class="module-shell">
                     <article class="security-card module-status-card">
@@ -300,7 +310,7 @@ $formatDate = static function (?string $value): string {
                 </div>
             </section>
         </section><?php endif; ?>
-        <footer>© 2026 Sistema de Vigilancia · Fase 8 · Eventos, evidencias, recorridos y novedades</footer>
+        <footer>© 2026 Sistema de Vigilancia · Fase 9 · Supervisiones</footer>
     </main>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -326,6 +336,10 @@ $formatDate = static function (?string $value): string {
 <dialog class="organization-dialog phase8-dialog" id="phase8Dialog">
     <form method="dialog" id="phase8Form"><div class="card-heading"><div><p class="eyebrow">Fase 8</p><h2 id="phase8DialogTitle">Detalle</h2></div><button class="ghost-button" type="button" id="closePhase8Dialog">Cerrar</button></div><div id="phase8DialogBody"></div><div class="form-message" id="phase8Message" role="alert"></div></form>
 </dialog>
+<dialog class="organization-dialog phase9-dialog" id="phase9Dialog">
+    <form method="dialog" id="phase9Form"><div class="card-heading"><div><p class="eyebrow">Fase 9</p><h2 id="phase9DialogTitle">Supervisión</h2></div><button class="ghost-button" type="button" id="closePhase9Dialog">Cerrar</button></div><div id="phase9DialogBody"></div><div class="form-message" id="phase9Message" role="alert"></div></form>
+</dialog>
+<dialog class="phase9-camera" id="phase9CameraDialog"><div><video id="phase9Video" autoplay playsinline muted></video><canvas id="phase9Canvas" hidden></canvas><div class="close-actions"><button class="submit" id="phase9Capture" type="button">Capturar fotografía</button><button class="ghost-button" id="phase9CloseCamera" type="button">Cancelar</button></div></div></dialog>
 <script type="module" src="assets/js/app.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
 <script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
@@ -333,5 +347,6 @@ $formatDate = static function (?string $value): string {
 <script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
 <script type="module" src="assets/js/phase8-panel.js?v=8.1.0"></script>
+<script type="module" src="assets/js/phase9-panel.js?v=9.0.0"></script>
 </body>
 </html>
