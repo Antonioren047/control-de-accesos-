@@ -5,10 +5,8 @@ namespace Vigilancia\Services;
 
 use PDO;
 use PDOException;
-use Vigilancia\Auth\AuthorizationService;
 use Vigilancia\Auth\PasswordPolicy;
 use Vigilancia\Exceptions\HttpException;
-use Vigilancia\Repositories\PermissionRepository;
 use Vigilancia\Repositories\SecurityLogRepository;
 use Vigilancia\Repositories\UserAdminRepository;
 use Vigilancia\Support\ClientInfo;
@@ -16,14 +14,11 @@ use Vigilancia\Validation\Validator;
 
 final class UserAdminService
 {
-    private AuthorizationService $authorization;
-
     public function __construct(
         private PDO $pdo,
         private UserAdminRepository $repository,
         private SecurityLogRepository $logs
     ) {
-        $this->authorization = new AuthorizationService(new PermissionRepository($pdo));
     }
 
     public function index(array $actor): array
@@ -132,7 +127,6 @@ final class UserAdminService
 
     private function requireGlobal(array $actor): void
     {
-        $this->authorization->require($actor, 'users.manage');
         if ($actor['role_code'] !== 'superadmin') throw new HttpException('Solo el usuario global puede administrar todos los tipos de usuario.', 403);
     }
 

@@ -181,7 +181,7 @@ $formatDate = static function (?string $value): string {
                     <section class="organization-workspace" data-organization-module="<?= htmlspecialchars($moduleId) ?>"
                         data-can-residents="<?= in_array('residents.manage',$profile['permissions'],true)?'1':'0' ?>"
                         data-can-guards="<?= array_intersect(['guards.manage','guards.view'],$profile['permissions'])?'1':'0' ?>"
-                        data-can-manage-users="<?= $profile['role']['code']==='superadmin'&&in_array('users.manage',$profile['permissions'],true)?'1':'0' ?>"
+                        data-can-manage-users="<?= $profile['role']['code']==='superadmin'?'1':'0' ?>"
                         data-can-manage-guards="<?= in_array('guards.manage',$profile['permissions'],true)?'1':'0' ?>"
                         data-can-manage-shifts="<?= in_array('shifts.manage',$profile['permissions'],true)?'1':'0' ?>"
                         data-can-manage-assignments="<?= in_array('assignments.manage',$profile['permissions'],true)?'1':'0' ?>"
@@ -195,7 +195,7 @@ $formatDate = static function (?string $value): string {
                                 <?php if ($moduleId === 'sitios' && in_array('units.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-organization-create="unit">Nueva unidad</button><?php endif; ?>
                                 <?php if ($moduleId === 'usuarios' && in_array('residents.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-organization-create="resident">Nuevo residente</button><?php endif; ?>
                                 <?php if ($moduleId === 'usuarios' && in_array('guards.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="guard">Nuevo vigilante</button><?php endif; ?>
-                                <?php if ($moduleId === 'usuarios' && $profile['role']['code'] === 'superadmin' && in_array('users.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="user">Nuevo usuario administrativo</button><?php endif; ?>
+                                <?php if ($moduleId === 'usuarios' && $profile['role']['code'] === 'superadmin'): ?><button class="submit" type="button" data-workforce-create="user">Nuevo usuario administrativo</button><?php endif; ?>
                                 <?php if ($moduleId === 'turnos' && in_array('shifts.manage', $profile['permissions'], true)): ?><button class="ghost-button" type="button" data-workforce-create="shift">Nuevo turno</button><?php endif; ?>
                                 <?php if ($moduleId === 'turnos' && in_array('assignments.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="assignment">Nueva asignación</button><?php endif; ?>
                             </div>
@@ -375,7 +375,7 @@ $formatDate = static function (?string $value): string {
 <dialog class="phase9-camera" id="phase9CameraDialog"><div><video id="phase9Video" autoplay playsinline muted></video><canvas id="phase9Canvas" hidden></canvas><div class="close-actions"><button class="submit" id="phase9Capture" type="button">Capturar fotografía</button><button class="ghost-button" id="phase9CloseCamera" type="button">Cancelar</button></div></div></dialog>
 <script type="module" src="assets/js/app.js?v=12.0.2"></script>
 <script type="module" src="assets/js/phase3.js?v=4.2.0"></script>
-<script type="module" src="assets/js/phase4.js?v=4.2.1"></script>
+<script type="module" src="assets/js/phase4.js?v=4.2.2"></script>
 <script type="module" src="assets/js/phase5-panel.js?v=5.1.0"></script>
 <script type="module" src="assets/js/phase6-panel.js?v=6.1.0"></script>
 <script type="module" src="assets/js/phase7-panel.js?v=7.1.0"></script>

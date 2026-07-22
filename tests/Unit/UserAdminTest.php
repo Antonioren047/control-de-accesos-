@@ -35,8 +35,8 @@ final class UserAdminTest extends TestCase
         foreach (["get('/users'", "post('/users/create'", "post('/users/update'", "post('/users/status'"] as $route) {
             self::assertStringContainsString($route, $routes);
         }
-        self::assertStringContainsString("require(\$actor, 'users.manage')", $service);
         self::assertStringContainsString("\$actor['role_code'] !== 'superadmin'", $service);
+        self::assertStringNotContainsString("require(\$actor, 'users.manage')", $service);
         self::assertStringContainsString("['superadmin', 'admin', 'supervisor']", $service);
         self::assertStringContainsString('Debe permanecer al menos un usuario global activo.', $service);
         self::assertStringContainsString('users.administrative_created', $service);
