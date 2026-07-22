@@ -15,6 +15,7 @@ final class WorkforceController
     public function shifts():void{$this->respond('shifts');}
     public function assignments():void{$this->respond('assignments');}
     public function create(Request $request):void{CsrfMiddleware::verify($request->header('x-csrf-token'));$data=$this->service->create($this->auth->current(),(string)($request->body['entity']??''),$request->body);JsonResponse::success('Registro creado correctamente.',$data,201);}
+    public function update(Request $request):void{CsrfMiddleware::verify($request->header('x-csrf-token'));$data=$this->service->update($this->auth->current(),(string)($request->body['entity']??''),(int)($request->body['id']??0),$request->body);JsonResponse::success('Registro actualizado correctamente.',$data);}
     public function action(Request $request):void{CsrfMiddleware::verify($request->header('x-csrf-token'));$data=$this->service->action($this->auth->current(),(string)($request->body['action']??''),$request->body);JsonResponse::success('Acción realizada correctamente.',$data);}
     private function respond(string $entity):void{JsonResponse::success('Información operativa consultada.',['items'=>$this->service->list($this->auth->current(),$entity)]);}
 }

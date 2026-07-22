@@ -65,14 +65,18 @@ $formatDate = static function (?string $value): string {
     <link rel="stylesheet" href="assets/css/phase2.css">
     <link rel="stylesheet" href="assets/css/phase3.css">
     <link rel="stylesheet" href="assets/css/phase4.css">
-    <link rel="stylesheet" href="assets/css/phase5.css">
+    <link rel="stylesheet" href="assets/css/phase5.css?v=5.1.0">
     <link rel="stylesheet" href="assets/css/phase6.css">
     <link rel="stylesheet" href="assets/css/phase7.css">
     <link rel="stylesheet" href="assets/css/phase8.css?v=8.0.2">
     <link rel="stylesheet" href="assets/css/phase9.css?v=9.0.0">
     <link rel="stylesheet" href="assets/css/phase10.css?v=10.0.0">
     <link rel="stylesheet" href="assets/css/phase11.css?v=11.0.0">
-    <link rel="stylesheet" href="assets/css/phase12.css?v=12.0.0">
+    <link rel="stylesheet" href="assets/css/phase12.css?v=12.2.0">
+    <link rel="stylesheet" href="assets/css/site-ui.css?v=1.0.0">
+    <link rel="stylesheet" href="assets/css/ui-map.css?v=1.0.0">
+    <script src="assets/js/site-ui.js?v=1.0.1"></script>
+    <script src="assets/js/ui-map.js?v=1.0.1"></script>
 </head>
 <body>
 <a class="skip-link" href="#mainContent">Saltar al contenido principal</a>
@@ -105,7 +109,7 @@ $formatDate = static function (?string $value): string {
             <div class="top-actions">
                 <span class="connection"><i></i>Sesión activa</span>
                 <div class="notification-center">
-                    <button class="notification-button" id="notificationButton" type="button" aria-label="Abrir notificaciones" aria-expanded="false">♢<span id="notificationBadge" hidden>0</span></button>
+                    <button class="notification-button" id="notificationButton" type="button" aria-label="Abrir notificaciones" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="notificationBadge" hidden>0</span></button>
                     <div class="notification-dropdown" id="notificationDropdown" hidden><div class="notification-dropdown-head"><strong>Notificaciones</strong><button type="button" id="readAllNotifications">Marcar todas</button></div><div id="notificationPreview"><p class="muted">Consultando…</p></div></div>
                 </div>
                 <label class="theme-control">Tema
@@ -159,6 +163,10 @@ $formatDate = static function (?string $value): string {
             $isPhaseEightModule = in_array($moduleId, ['eventos','recorridos'], true);
             $isPhaseNineModule = $moduleId === 'supervisiones';
             $isPhaseElevenModule = in_array($moduleId,['reportes','auditoria','mantenimiento'],true);
+            $statusEntities=[];
+            if($moduleId==='clientes'&&in_array('clients.manage',$profile['permissions'],true))$statusEntities[]='client';
+            if($moduleId==='sitios'){if(in_array('locations.manage',$profile['permissions'],true))$statusEntities[]='location';if(in_array('access_points.manage',$profile['permissions'],true))$statusEntities[]='access_point';if(in_array('units.manage',$profile['permissions'],true))$statusEntities[]='unit';}
+            if($moduleId==='usuarios'&&in_array('residents.manage',$profile['permissions'],true))$statusEntities[]='resident';
         ?>
             <section class="app-view" data-view="<?= htmlspecialchars($moduleId) ?>" data-view-eyebrow="<?= htmlspecialchars($module['eyebrow']) ?>" data-view-title="<?= htmlspecialchars($module['title']) ?>" hidden>
                 <section class="page-intro module-intro">
@@ -190,7 +198,7 @@ $formatDate = static function (?string $value): string {
                                 <?php if ($moduleId === 'turnos' && in_array('assignments.manage', $profile['permissions'], true)): ?><button class="submit" type="button" data-workforce-create="assignment">Nueva asignación</button><?php endif; ?>
                             </div>
                         </div>
-                        <div class="organization-content" data-organization-content data-status-entities="<?= $moduleId === 'clientes' && $profile['role']['code'] === 'superadmin' ? 'client' : ($moduleId === 'sitios' && in_array('locations.manage', $profile['permissions'], true) ? 'location,access_point,unit' : '') ?>"><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
+                        <div class="organization-content" data-organization-content data-status-entities="<?= htmlspecialchars(implode(',',$statusEntities)) ?>"><article class="security-card"><p class="muted">Consultando registros…</p></article></div>
                     </section>
                 <?php elseif ($isPhaseFiveModule): ?>
                     <section class="phase5-workspace" data-phase5-module="<?= htmlspecialchars($moduleId) ?>" data-can-close="<?= in_array('operational_sessions.close',$profile['permissions'],true)?'1':'0' ?>">
@@ -363,12 +371,12 @@ $formatDate = static function (?string $value): string {
     <form method="dialog" id="phase9Form"><div class="card-heading"><div><p class="eyebrow">Fase 9</p><h2 id="phase9DialogTitle">Supervisión</h2></div><button class="ghost-button" type="button" id="closePhase9Dialog">Cerrar</button></div><div id="phase9DialogBody"></div><div class="form-message" id="phase9Message" role="alert"></div></form>
 </dialog>
 <dialog class="phase9-camera" id="phase9CameraDialog"><div><video id="phase9Video" autoplay playsinline muted></video><canvas id="phase9Canvas" hidden></canvas><div class="close-actions"><button class="submit" id="phase9Capture" type="button">Capturar fotografía</button><button class="ghost-button" id="phase9CloseCamera" type="button">Cancelar</button></div></div></dialog>
-<script type="module" src="assets/js/app.js?v=12.0.0"></script>
-<script type="module" src="assets/js/phase3.js?v=4.0.2"></script>
-<script type="module" src="assets/js/phase4.js?v=4.0.3"></script>
-<script type="module" src="assets/js/phase5-panel.js?v=5.0.0"></script>
-<script type="module" src="assets/js/phase6-panel.js?v=6.0.0"></script>
-<script type="module" src="assets/js/phase7-panel.js?v=7.0.0"></script>
+<script type="module" src="assets/js/app.js?v=12.0.2"></script>
+<script type="module" src="assets/js/phase3.js?v=4.2.0"></script>
+<script type="module" src="assets/js/phase4.js?v=4.2.0"></script>
+<script type="module" src="assets/js/phase5-panel.js?v=5.1.0"></script>
+<script type="module" src="assets/js/phase6-panel.js?v=6.1.0"></script>
+<script type="module" src="assets/js/phase7-panel.js?v=7.1.0"></script>
 <script type="module" src="assets/js/phase8-panel.js?v=8.1.0"></script>
 <script type="module" src="assets/js/phase9-panel.js?v=9.0.0"></script>
 <script type="module" src="assets/js/phase10.js?v=10.0.0"></script>

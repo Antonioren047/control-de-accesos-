@@ -17,6 +17,7 @@ final class OrganizationController
     public function units():void{$this->respond('units');}
     public function residents():void{$this->respond('residents');}
     public function create(Request $request):void{CsrfMiddleware::verify($request->header('x-csrf-token'));$entity=(string)($request->body['entity']??'');$id=$this->organization->create($this->auth->current(),$entity,$request->body);JsonResponse::success('Registro creado correctamente.',['id'=>$id],201);}
+    public function update(Request $request):void{CsrfMiddleware::verify($request->header('x-csrf-token'));$entity=(string)($request->body['entity']??'');$id=(int)($request->body['id']??0);$this->organization->update($this->auth->current(),$entity,$id,$request->body);JsonResponse::success('Registro actualizado correctamente.');}
     public function status(Request $request):void
     {
         CsrfMiddleware::verify($request->header('x-csrf-token'));

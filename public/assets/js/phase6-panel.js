@@ -31,7 +31,7 @@ function render(items) {
 
 async function review(button) {
     const decision = button.dataset.review;
-    const comment = prompt(`Escribe el motivo para ${decision === 'accepted' ? 'aceptar' : 'rechazar'} el registro (mínimo 10 caracteres):`);
+    const comment = await SiteUI.prompt(`Escribe el motivo para ${decision === 'accepted' ? 'aceptar' : 'rechazar'} el registro (mínimo 10 caracteres).`, {title: decision === 'accepted' ? 'Aceptar registro' : 'Rechazar registro', label: 'Motivo de la decisión'});
     if (!comment) return;
     button.disabled = true;
     try {
@@ -46,6 +46,7 @@ async function review(button) {
 async function load() {
     if (!workspace) return;
     const content = workspace.querySelector('[data-phase6-content]');
+    SiteUI.loading(content,'Consultando conflictos de sincronización…');
     try {
         const data = await api('/offline/conflicts');
         content.innerHTML = render(data.items || []);

@@ -14,6 +14,7 @@ async function api(path, options = {}) {
 }
 
 function notify(message, type = 'success') {
+    if (window.SiteUI) { window.SiteUI.toast(message, type); return; }
     if (!toast) return;
     toast.textContent = message;
     toast.dataset.type = type;
@@ -21,12 +22,12 @@ function notify(message, type = 'success') {
     setTimeout(() => toast.classList.remove('visible'), 3500);
 }
 
-initTheme(async theme => {
+try { initTheme(async theme => {
     const profileTheme = document.querySelector('#profileTheme');
     if (profileTheme) profileTheme.textContent = {auto: 'Automático', light: 'Claro', dark: 'Oscuro'}[theme] || theme;
     try { await api('/auth/theme', {method: 'POST', body: JSON.stringify({theme})}); }
     catch { notify('El tema cambió localmente, pero no pudo guardarse.', 'error'); }
-});
+}); } catch { document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; }
 
 const sidebar = document.querySelector('#sidebar');
 const sidebarBackdrop = document.querySelector('#sidebarBackdrop');

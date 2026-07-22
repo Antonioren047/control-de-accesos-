@@ -56,13 +56,20 @@ final class OrganizationService
         return $id;
     }
 
+    public function update(array $actor,string $entity,int $id,array $input):void
+    {
+        if($id<=0)throw new HttpException('El registro indicado no es válido.',422);$this->requireManager($actor);
+        try{match($entity){'client'=>$this->updateClient($actor,$id,$input),'location'=>$this->updateLocation($actor,$id,$input),'access_point'=>$this->updatePoint($actor,$id,$input),'unit'=>$this->updateUnit($actor,$id,$input),'resident'=>$this->updateResident($actor,$id,$input),default=>throw new HttpException('La entidad indicada no existe.',404)};}
+        catch(PDOException $exception){if((string)$exception->getCode()==='23000')throw new HttpException('El código o correo ya está registrado dentro de este alcance.',409);throw $exception;}
+        $this->audit($actor,'organization.'.$entity.'_updated',['record_id'=>$id]);
+    }
+
     public function setActive(array $actor,string $entity,int $id,bool $active):void
     {
-        $permissions=['client'=>'clients.manage','location'=>'locations.manage','access_point'=>'access_points.manage','unit'=>'units.manage'];
+        $permissions=['client'=>'clients.manage','location'=>'locations.manage','access_point'=>'access_points.manage','unit'=>'units.manage','resident'=>'residents.manage'];
         if(!isset($permissions[$entity])) throw new HttpException('La entidad indicada no existe.',404);
-        $this->authorization->require($actor,$permissions[$entity]);
-        if($entity==='client' && $actor['role_code']!=='superadmin') throw new HttpException('Solo el Superadministrador puede cambiar el estado de un cliente.',403);
-        $allowed=match($entity){'client'=>$this->scope->client($actor,$id),'location'=>$this->scope->location($actor,$id),'access_point'=>$this->scope->accessPoint($actor,$id),'unit'=>$this->scope->unit($actor,$id)};
+        $this->authorization->require($actor,$permissions[$entity]);$this->requireManager($actor);
+        $allowed=match($entity){'client'=>$this->scope->client($actor,$id),'location'=>$this->scope->location($actor,$id),'access_point'=>$this->scope->accessPoint($actor,$id),'unit'=>$this->scope->unit($actor,$id),'resident'=>$this->residentInScope($actor,$id)};
         if(!$allowed) throw new HttpException('El registro está fuera de tu alcance.',403);
         $this->organization->setActive($entity,$id,$active,(int)$actor['id']);
         $this->audit($actor,'organization.'.$entity.'_status_changed',['record_id'=>$id,'is_active'=>$active]);
@@ -109,6 +116,14 @@ final class OrganizationService
         $this->pdo->beginTransaction();
         try{$id=$this->organization->createResident(['full_name'=>trim($input['full_name']),'email'=>strtolower(trim($input['email'])),'password_hash'=>password_hash($input['password'],PASSWORD_DEFAULT),'phone'=>trim((string)($input['phone']??'')),'unit_id'=>(int)$input['unit_id']],(int)$actor['surveillance_company_id'],(int)$actor['id']);$this->pdo->commit();return $id;}catch(\Throwable $e){if($this->pdo->inTransaction())$this->pdo->rollBack();throw $e;}
     }
+
+    private function updateClient(array $actor,int $id,array $input):void{$this->authorization->require($actor,'clients.manage');if(!$this->scope->client($actor,$id))throw new HttpException('El cliente está fuera de tu alcance.',403);$this->validate($input,['code','name','timezone']);$this->validateCode((string)$input['code']);$this->organization->updateClient($id,['code'=>strtoupper(trim($input['code'])),'name'=>trim($input['name']),'legal_name'=>trim((string)($input['legal_name']??'')),'timezone'=>(string)$input['timezone']],(int)$actor['id']);}
+    private function updateLocation(array $actor,int $id,array $input):void{$this->authorization->require($actor,'locations.manage');if(!$this->scope->location($actor,$id))throw new HttpException('El lugar está fuera de tu alcance.',403);$this->validate($input,['client_id','code','name','address_line','timezone']);if(!$this->scope->client($actor,(int)$input['client_id']))throw new HttpException('El cliente está fuera de tu alcance.',403);$this->validateCode((string)$input['code']);$this->organization->updateLocation($id,['client_id'=>(int)$input['client_id'],'code'=>strtoupper(trim($input['code'])),'name'=>trim($input['name']),'address_line'=>trim($input['address_line']),'city'=>trim((string)($input['city']??'')),'state'=>trim((string)($input['state']??'')),'postal_code'=>trim((string)($input['postal_code']??'')),'timezone'=>(string)$input['timezone']],(int)$actor['id']);}
+    private function updatePoint(array $actor,int $id,array $input):void{$this->authorization->require($actor,'access_points.manage');if(!$this->scope->accessPoint($actor,$id))throw new HttpException('El punto está fuera de tu alcance.',403);$this->validate($input,['location_id','code','name','point_type']);if(!$this->scope->location($actor,(int)$input['location_id']))throw new HttpException('El lugar está fuera de tu alcance.',403);$this->validateCode((string)$input['code']);if(!in_array($input['point_type'],['main','pedestrian','vehicle','service'],true))throw new HttpException('El tipo de punto no es válido.',422);$this->organization->updateAccessPoint($id,['location_id'=>(int)$input['location_id'],'code'=>strtoupper(trim($input['code'])),'name'=>trim($input['name']),'point_type'=>$input['point_type']],(int)$actor['id']);}
+    private function updateUnit(array $actor,int $id,array $input):void{$this->authorization->require($actor,'units.manage');if(!$this->scope->unit($actor,$id))throw new HttpException('La unidad está fuera de tu alcance.',403);$this->validate($input,['location_id','code','name','unit_type']);if(!$this->scope->location($actor,(int)$input['location_id']))throw new HttpException('El lugar está fuera de tu alcance.',403);$this->validateCode((string)$input['code']);if(!in_array($input['unit_type'],['house','apartment','lot','warehouse'],true))throw new HttpException('El tipo de unidad no es válido.',422);$this->organization->updateUnit($id,['location_id'=>(int)$input['location_id'],'code'=>strtoupper(trim($input['code'])),'name'=>trim($input['name']),'unit_type'=>$input['unit_type']],(int)$actor['id']);}
+    private function updateResident(array $actor,int $id,array $input):void{$this->authorization->require($actor,'residents.manage');if(!$this->residentInScope($actor,$id))throw new HttpException('El residente está fuera de tu alcance.',403);$this->validate($input,['full_name','email','unit_id']);if(!$this->scope->unit($actor,(int)$input['unit_id']))throw new HttpException('La unidad está fuera de tu alcance.',403);if(!Validator::email((string)$input['email']))throw new HttpException('El correo no es válido.',422);$password=(string)($input['password']??'');if($password!==''&&($errors=PasswordPolicy::errors($password)))throw new HttpException('La contraseña no cumple la política.',422,['password'=>$errors]);$this->pdo->beginTransaction();try{$this->organization->updateResident($id,['full_name'=>trim($input['full_name']),'email'=>strtolower(trim($input['email'])),'phone'=>trim((string)($input['phone']??'')),'unit_id'=>(int)$input['unit_id'],'password_hash'=>$password!==''?password_hash($password,PASSWORD_DEFAULT):null],(int)$actor['id']);$this->pdo->commit();}catch(\Throwable $e){if($this->pdo->inTransaction())$this->pdo->rollBack();throw $e;}}
+    private function requireManager(array $actor):void{if(!in_array($actor['role_code'],['superadmin','admin'],true))throw new HttpException('Esta acción solo corresponde a Superadministrador o Administrador.',403);}
+    private function residentInScope(array $actor,int $id):bool{foreach($this->organization->residents($actor) as $resident)if((int)$resident['id']===$id)return true;return false;}
 
     private function authorizedList(array $actor,array $permissions,callable $callback):array
     {

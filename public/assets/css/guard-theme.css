@@ -1,0 +1,56 @@
+:root { --surface-soft: color-mix(in srgb, var(--steel) 8%, var(--surface)); }
+html[data-theme="dark"] { --surface-soft: #172d4c; }
+
+html[data-theme="dark"] .guard-portal-top,
+html[data-theme="dark"] .guard-module-grid button,
+html[data-theme="dark"] .operational-card,
+html[data-theme="dark"] .guard-notification-bell,
+html[data-theme="dark"] .guard-notification-dropdown,
+html[data-theme="dark"] .guard-notification,
+html[data-theme="dark"] .offline-review-card,
+html[data-theme="dark"] .p8-list article,
+html[data-theme="dark"] .p8-round-state {
+    border-color: var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .guard-notification.unread,
+html[data-theme="dark"] .module-stage,
+html[data-theme="dark"] .session-metrics article {
+    border-color: var(--border);
+    background: var(--surface-soft);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .guard-notification span,
+html[data-theme="dark"] .guard-notification small,
+html[data-theme="dark"] .p8-list small,
+html[data-theme="dark"] .module-stage p,
+html[data-theme="dark"] .guard-identity small { color: var(--muted); }
+
+html[data-theme="dark"] .p8-form input,
+html[data-theme="dark"] .p8-form select,
+html[data-theme="dark"] .p8-form textarea,
+html[data-theme="dark"] #roundOpenActions textarea,
+html[data-theme="dark"] .operational-card input,
+html[data-theme="dark"] .operational-card select,
+html[data-theme="dark"] .operational-card textarea {
+    border-color: var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+html[data-theme="dark"] .ghost-button,
+html[data-theme="dark"] .guard-view-more,
+html[data-theme="dark"] .guard-notification-dropdown-head button {
+    border-color: color-mix(in srgb, var(--steel) 58%, transparent);
+    background: var(--surface-soft);
+    color: #f5f7fa;
+}
+
+html[data-theme="dark"] .submit { background: #2f6fbd; color: #fff; }
+html[data-theme="dark"] .scope-notice { background: #17365d; color: #eef6ff; }
+html[data-theme="dark"] .p8-preview-list span { background: #203b60; color: #dcecff; }
+.guard-top-actions .guard-notification-center { margin-left: 0 !important; }
+.guard-access-theme { margin-left: auto; color: #fff; }

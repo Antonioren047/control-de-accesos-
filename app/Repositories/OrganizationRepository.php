@@ -70,7 +70,7 @@ final class OrganizationRepository
         if ($units === []) return [];
         $placeholders = implode(',', array_fill(0, count($units), '?'));
         return $this->fetchAll(
-            "SELECT u.id,u.full_name,u.email,rp.phone,u.is_active,GROUP_CONCAT(DISTINCT un.name ORDER BY un.name SEPARATOR ', ') AS units FROM users u JOIN roles r ON r.id=u.role_id AND r.code='resident' LEFT JOIN resident_profiles rp ON rp.user_id=u.id JOIN resident_units ru ON ru.resident_user_id=u.id AND ru.is_active=1 JOIN units un ON un.id=ru.unit_id WHERE un.id IN ($placeholders) GROUP BY u.id,u.full_name,u.email,rp.phone,u.is_active ORDER BY u.full_name",
+            "SELECT u.id,u.full_name,u.email,rp.phone,u.is_active,MAX(CASE WHEN ru.is_primary=1 THEN un.id END) AS unit_id,GROUP_CONCAT(DISTINCT un.name ORDER BY un.name SEPARATOR ', ') AS units FROM users u JOIN roles r ON r.id=u.role_id AND r.code='resident' LEFT JOIN resident_profiles rp ON rp.user_id=u.id JOIN resident_units ru ON ru.resident_user_id=u.id AND ru.is_active=1 JOIN units un ON un.id=ru.unit_id WHERE un.id IN ($placeholders) GROUP BY u.id,u.full_name,u.email,rp.phone,u.is_active ORDER BY u.full_name",
             $units
         );
     }
@@ -122,8 +122,23 @@ final class OrganizationRepository
             ->execute([$residentId,$unitId,$primary?1:0,$actorId]);
     }
 
+    public function updateClient(int $id,array $d,int $actorId):void{$this->pdo->prepare('UPDATE clients SET code=?,name=?,legal_name=?,timezone=?,updated_by=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$d['code'],$d['name'],$d['legal_name']?:null,$d['timezone'],$actorId,$id]);}
+    public function updateLocation(int $id,array $d,int $actorId):void{$this->pdo->prepare('UPDATE locations SET client_id=?,code=?,name=?,address_line=?,city=?,state=?,postal_code=?,timezone=?,updated_by=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$d['client_id'],$d['code'],$d['name'],$d['address_line'],$d['city']?:null,$d['state']?:null,$d['postal_code']?:null,$d['timezone'],$actorId,$id]);}
+    public function updateAccessPoint(int $id,array $d,int $actorId):void{$this->pdo->prepare('UPDATE access_points SET location_id=?,code=?,name=?,point_type=?,updated_by=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$d['location_id'],$d['code'],$d['name'],$d['point_type'],$actorId,$id]);}
+    public function updateUnit(int $id,array $d,int $actorId):void{$this->pdo->prepare('UPDATE units SET location_id=?,code=?,name=?,unit_type=?,updated_by=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$d['location_id'],$d['code'],$d['name'],$d['unit_type'],$actorId,$id]);}
+    public function updateResident(int $id,array $d,int $actorId):void
+    {
+        $sql='UPDATE users SET full_name=?,email=?,updated_at=UTC_TIMESTAMP()';$params=[$d['full_name'],$d['email']];
+        if(!empty($d['password_hash'])){$sql.=',password_hash=?,password_changed_at=UTC_TIMESTAMP(),force_password_change=1';$params[]=$d['password_hash'];}
+        $sql.=' WHERE id=?';$params[]=$id;$this->pdo->prepare($sql)->execute($params);
+        $this->pdo->prepare('UPDATE resident_profiles SET phone=?,updated_at=UTC_TIMESTAMP() WHERE user_id=?')->execute([$d['phone']?:null,$id]);
+        $this->pdo->prepare('UPDATE resident_units SET is_primary=0,updated_at=UTC_TIMESTAMP() WHERE resident_user_id=?')->execute([$id]);
+        $this->linkResident($id,(int)$d['unit_id'],$actorId,true);
+    }
+
     public function setActive(string $entity, int $id, bool $active, int $actorId): void
     {
+        if($entity==='resident'){$this->pdo->prepare('UPDATE users SET is_active=?,updated_at=UTC_TIMESTAMP() WHERE id=?')->execute([$active?1:0,$id]);$this->pdo->prepare('UPDATE resident_profiles SET is_active=?,updated_at=UTC_TIMESTAMP() WHERE user_id=?')->execute([$active?1:0,$id]);return;}
         $tables=['client'=>'clients','location'=>'locations','access_point'=>'access_points','unit'=>'units'];
         $table=$tables[$entity]??null;
         if(!$table) return;

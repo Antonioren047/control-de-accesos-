@@ -59,6 +59,7 @@ $csrf = CsrfMiddleware::token();
     <title>Código QR de acceso</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/phase7.css">
+    <link rel="stylesheet" href="assets/css/ui-map.css?v=1.0.0">
     <style>.qr-sheet{max-width:520px;margin:30px auto;text-align:center}.qr-sheet img{width:min(360px,90%);background:#fff;padding:16px;border-radius:18px}.qr-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:18px}</style>
 </head>
 <body>
@@ -74,6 +75,7 @@ $csrf = CsrfMiddleware::token();
     </div>
     <canvas id="shareCanvas" width="900" height="1120" hidden></canvas>
 </main>
+<script src="assets/js/ui-map.js?v=1.0.1"></script>
 <script src="assets/js/visit-qr.js?v=7.0.2" defer></script>
 </body>
 </html>

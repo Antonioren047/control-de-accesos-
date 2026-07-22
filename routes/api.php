@@ -104,11 +104,13 @@ $router->get('/organization/access-points', [$organizationController, 'accessPoi
 $router->get('/organization/units', [$organizationController, 'units']);
 $router->get('/organization/residents', [$organizationController, 'residents']);
 $router->post('/organization/create', [$organizationController, 'create']);
+$router->post('/organization/update', [$organizationController, 'update']);
 $router->post('/organization/status', [$organizationController, 'status']);
 $router->get('/workforce/guards', [$workforceController, 'guards']);
 $router->get('/workforce/shifts', [$workforceController, 'shifts']);
 $router->get('/workforce/assignments', [$workforceController, 'assignments']);
 $router->post('/workforce/create', [$workforceController, 'create']);
+$router->post('/workforce/update', [$workforceController, 'update']);
 $router->post('/workforce/action', [$workforceController, 'action']);
 $router->get('/operations/catalog', [$operationalController, 'catalog']);
 $router->post('/operations/start', [$operationalController, 'start']);

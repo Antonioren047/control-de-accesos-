@@ -31,6 +31,7 @@ $csrf = CsrfMiddleware::token();
     <title>Iniciar sesión · Sistema de Vigilancia</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/phase2.css">
+    <link rel="stylesheet" href="assets/css/ui-map.css?v=1.0.0">
 </head>
 <body class="login-page">
 <main class="login-shell">
@@ -63,6 +64,7 @@ $csrf = CsrfMiddleware::token();
         </form>
     </section>
 </main>
+<script src="assets/js/ui-map.js?v=1.0.1"></script>
 <script type="module" src="assets/js/login.js"></script>
 </body>
 </html>

@@ -1,2 +1,21 @@
 <?php
-declare(strict_types=1);$checks=['PHP >= 8.1'=>version_compare(PHP_VERSION,'8.1.0','>='),'pdo_mysql'=>extension_loaded('pdo_mysql'),'json'=>extension_loaded('json'),'mbstring'=>extension_loaded('mbstring'),'storage escribible'=>is_writable(dirname(__DIR__).'/storage')];$failed=false;foreach($checks as $name=>$ok){echo sprintf("[%s] %s%s",$ok?'OK':'ERROR',$name,PHP_EOL);$failed=$failed||!$ok;}exit($failed?1:0);
+declare(strict_types=1);
+
+$checks = [
+    'PHP >= 8.1' => version_compare(PHP_VERSION, '8.1.0', '>='),
+    'pdo_mysql' => extension_loaded('pdo_mysql'),
+    'json' => extension_loaded('json'),
+    'mbstring' => extension_loaded('mbstring'),
+    'dom' => extension_loaded('dom'),
+    'fileinfo' => extension_loaded('fileinfo'),
+    'openssl' => extension_loaded('openssl'),
+    'storage escribible' => is_writable(dirname(__DIR__) . '/storage'),
+];
+
+$failed = false;
+foreach ($checks as $name => $ok) {
+    echo sprintf('[%s] %s%s', $ok ? 'OK' : 'ERROR', $name, PHP_EOL);
+    $failed = $failed || !$ok;
+}
+
+exit($failed ? 1 : 0);

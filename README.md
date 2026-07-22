@@ -47,21 +47,13 @@ La Fase 12 consolida la experiencia visual, accesibilidad, pruebas globales, doc
 
 PHP 8.1+, pdo_mysql, json, mbstring, Apache con mod_rewrite/mod_headers, MySQL 5.7+ o MariaDB 10.4+ y Composer 2.
 
-## Instalación rápida en XAMPP
+## Instalación de producción
 
-    cd C:\xampp-8.1\htdocs\control-de-accesos
-    C:\xampp-8.1\php\php.exe scripts\check_requirements.php
-    composer install
+El paquete cPanel incluye las dependencias PHP y no requiere Composer en el servidor. Crea previamente una base MySQL vacía, sube y extrae el ZIP, apunta el DocumentRoot al directorio `public` y abre `/install/` mediante HTTPS.
 
-Abre http://localhost/control-de-accesos/public/install/. El asistente crea la base si el usuario de MySQL tiene permiso, escribe .env, ejecuta migraciones/seeds, crea empresa y superadministrador y genera storage/installed.lock.
+El asistente valida que la base esté vacía, escribe `.env`, ejecuta las migraciones y catálogos indispensables, crea la empresa y un único usuario global, y genera `storage/installed.lock`. No carga información de prueba.
 
-## Consola
-
-    C:\xampp-8.1\php\php.exe scripts\migrate.php
-    C:\xampp-8.1\php\php.exe scripts\seed.php
-    C:\xampp-8.1\php\php.exe scripts\seed.php --demo
-    C:\xampp-8.1\php\php.exe scripts\release_check.php
-    vendor\bin\phpunit
+Consulta [el manual de instalación en cPanel](docs/INSTALACION-CPANEL.md) antes de publicar.
 
 ## Endpoints
 
