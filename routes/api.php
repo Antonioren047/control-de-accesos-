@@ -6,6 +6,7 @@ use Vigilancia\Controllers\HealthController;
 use Vigilancia\Controllers\PermissionController;
 use Vigilancia\Controllers\OrganizationController;
 use Vigilancia\Controllers\UserSecurityController;
+use Vigilancia\Controllers\UserAdminController;
 use Vigilancia\Controllers\WorkforceController;
 use Vigilancia\Controllers\OperationalController;
 use Vigilancia\Controllers\OfflineController;
@@ -27,6 +28,7 @@ use Vigilancia\Repositories\OrganizationRepository;
 use Vigilancia\Repositories\PermissionRepository;
 use Vigilancia\Repositories\SecurityLogRepository;
 use Vigilancia\Repositories\WorkforceRepository;
+use Vigilancia\Repositories\UserAdminRepository;
 use Vigilancia\Repositories\OperationalRepository;
 use Vigilancia\Repositories\OfflineRepository;
 use Vigilancia\Services\OperationalService;
@@ -51,12 +53,17 @@ use Vigilancia\Services\ReportService;
 use Vigilancia\Services\AuditService;
 use Vigilancia\Services\CronService;
 use Vigilancia\Services\MaintenanceService;
+use Vigilancia\Services\UserAdminService;
 use Vigilancia\Support\Config;
 
 $pdo = Connection::make(Config::database());
 $auth = new AuthService($pdo);
 $authController = new AuthController($auth);
 $userSecurityController = new UserSecurityController($auth);
+$userAdminController = new UserAdminController(
+    $auth,
+    new UserAdminService($pdo, new UserAdminRepository($pdo), new SecurityLogRepository($pdo))
+);
 $permissionController = new PermissionController(
     $auth,
     new PermissionAdminService(new PermissionRepository($pdo), new SecurityLogRepository($pdo))
@@ -96,6 +103,10 @@ $router->post('/auth/theme', [$authController, 'updateTheme']);
 $router->get('/auth/sessions', [$authController, 'sessions']);
 $router->post('/auth/sessions/revoke', [$authController, 'revokeSession']);
 $router->post('/users/password-reset', [$userSecurityController, 'resetPassword']);
+$router->get('/users', [$userAdminController, 'index']);
+$router->post('/users/create', [$userAdminController, 'create']);
+$router->post('/users/update', [$userAdminController, 'update']);
+$router->post('/users/status', [$userAdminController, 'status']);
 $router->get('/authorization/roles', [$permissionController, 'matrix']);
 $router->post('/authorization/roles', [$permissionController, 'update']);
 $router->get('/organization/clients', [$organizationController, 'clients']);
